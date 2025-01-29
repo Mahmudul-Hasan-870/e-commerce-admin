@@ -1,5 +1,4 @@
 const express = require('express');
-const path = require('path');
 const { createProduct, getAllProducts, getProductById, updateProduct, deleteProduct, addProductPage } = require('../controllers/ProductController');
 const upload = require('../config/multerConfig');  // Import multer middleware
 
@@ -13,3 +12,4 @@ router.put('/:id', updateProduct);
 router.delete('/:id', deleteProduct);
 
 module.exports = router;
+
