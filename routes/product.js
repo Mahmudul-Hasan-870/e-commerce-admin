@@ -1,11 +1,13 @@
 const express = require('express');
+const path = require('path');
 const { createProduct, getAllProducts, getProductById, updateProduct, deleteProduct, addProductPage } = require('../controllers/ProductController');
+const upload = require('../config/multerConfig');  // Import multer middleware
 
 const router = express.Router();
 
-router.post('/', createProduct);
+router.post('/', upload.single('image'), createProduct);  // Use multer middleware for file upload
 router.get('/', getAllProducts);
-router.get('/add', addProductPage)
+router.get('/add', addProductPage);
 router.get('/:id', getProductById);
 router.put('/:id', updateProduct);
 router.delete('/:id', deleteProduct);
