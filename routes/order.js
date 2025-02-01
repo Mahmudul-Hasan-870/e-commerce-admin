@@ -1,7 +1,10 @@
 const express = require('express');
-const router = express.Router();
-const orderController = require('../controllers/OrderController');
+const { order, orders } = require('../controllers/OrderController');  // Import the getUserOrders function
+const isAuthenticated = require('../middleware/auth');
 
-router.post('/order', orderController.store);
+const router = express.Router();
+
+router.post('/order', isAuthenticated, order); 
+router.get('/orders', isAuthenticated, orders); // This is for fetching the orders of the logged-in user
 
 module.exports = router;
