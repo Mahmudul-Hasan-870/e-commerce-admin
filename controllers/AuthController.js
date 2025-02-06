@@ -138,7 +138,6 @@ exports.getProfile = async (req, res) => {
     }
 };
 
-
 // Logout
 exports.logout = async (req, res) => {
     try {
@@ -157,4 +156,83 @@ exports.logout = async (req, res) => {
         res.status(500).json({ status: 'error', message: 'Internal server error' });
     }
 };
+
+// Backend
+
+// Fetch all users
+exports.getUsers = async (req, res) => {
+    try {
+      const users = await User.find();
+      res.status(200).json({ status: 'success', data: users });
+    } catch (err) {
+      res.status(500).json({ status: 'error', message: 'Error fetching users' });
+    }
+  };
+  
+  // Update user by ID
+  exports.updateUser = async (req, res) => {
+    try {
+      const { name, email, password, isLogged } = req.body;
+      const userId = req.params.id;
+  
+      let updatedFields = { name, email, isLogged };
+  
+      // Hash password if provided
+      if (password) {
+        const salt = await bcrypt.genSalt(10);
+        updatedFields.password = await bcrypt.hash(password, salt);
+      }
+  
+      const updatedUser = await User.findByIdAndUpdate(userId, updatedFields, { new: true });
+  
+      if (!updatedUser) {
+        return res.status(404).json({ status: 'error', message: 'User not found' });
+      }
+  
+      res.status(200).json({ status: 'success', data: updatedUser });
+    } catch (err) {
+      res.status(500).json({ status: 'error', message: 'Error updating user' });
+    }
+  };
+  
+  // Delete user by ID
+  exports.deleteUser = async (req, res) => {
+    try {
+      const userId = req.params.id;
+      const deletedUser = await User.findByIdAndDelete(userId);
+  
+      if (!deletedUser) {
+        return res.status(404).json({ status: 'error', message: 'User not found' });
+      }
+  
+      res.status(200).json({ status: 'success', message: 'User deleted successfully' });
+    } catch (err) {
+      res.status(500).json({ status: 'error', message: 'Error deleting user' });
+    }
+  };
+  
+// Fetch total users
+exports.getTotalUsers = async (req, res) => {
+    try {
+        const totalUsers = await User.countDocuments(); // Count the total number of users
+        res.status(200).json({ status: 'success', data: totalUsers });
+    } catch (err) {
+        res.status(500).json({ status: 'error', message: 'Error fetching total users' });
+    }
+};
+
+// Controller to fetch active users (users with isLogged: true)
+exports.getActiveUsers = async (req, res) => {
+    try {
+      // Count users with isLogged: true
+      const activeUsers = await User.countDocuments({ isLogged: true });
+  
+      // Return the count of active users
+      res.json({ status: 'success', data: activeUsers });
+    } catch (err) {
+      console.error('Error fetching active users:', err);
+      res.status(500).json({ status: 'error', message: 'Server Error' });
+    }
+  };
+
 

@@ -5,8 +5,10 @@ const dotenv = require('dotenv');
 const colors = require('colors');
 const connectDB = require('./config/db');
 const authRoutes = require('./routes/auth');
-const productRoutes = require('./routes/product');
-const orderRoutes = require('./routes/order');
+const productRoutes = require('./routes/products');
+const orderRoutes = require('./routes/orders');
+const adminRoutes = require('./routes/admin');
+
 
 dotenv.config();
 
@@ -31,6 +33,8 @@ connectDB().catch((err) => {
 app.use('/api/auth', authRoutes);
 app.use('/api/products', productRoutes);
 app.use('/api', orderRoutes);
+app.use('/api/admin', adminRoutes);
+
 
 
 // Start server

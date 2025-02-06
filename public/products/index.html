@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Products Page</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://cdn.jsdelivr.net/npm/remixicon/fonts/remixicon.css" rel="stylesheet">
+  <style>
+    /* Add a style to limit description to one line */
+    .description {
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      max-width: 250px; /* Adjust to the size you want */
+    }
+    .product-image {
+      max-width: 50px; /* Limit the image size */
+      max-height: 50px;
+    }
+  </style>
+</head>
+<body class="bg-gray-50 min-h-screen">
+  <div class="flex flex-col min-h-screen">
+    <!-- Header -->
+    <header class="bg-white shadow-md py-4 px-6 border-b border-gray-200">
+      <h1 class="text-2xl font-bold text-gray-800 flex items-center">
+        <i class="ri-shopping-bag-3-line text-blue-500 text-3xl mr-2"></i>
+        Products
+      </h1>
+    </header>
+
+    <!-- Products Content -->
+    <main class="flex-1 p-10">
+      <h2 class="text-xl font-semibold text-gray-800 mb-6">Product List</h2>
+
+      <div class="overflow-x-auto">
+        <table class="min-w-full bg-white shadow-lg rounded-xl" id="product-table">
+          <thead class="bg-blue-100">
+            <tr>
+              <th class="py-3 px-4 text-left text-sm font-semibold text-gray-700">Image</th>
+              <th class="py-3 px-4 text-left text-sm font-semibold text-gray-700">Name</th>
+              <th class="py-3 px-4 text-left text-sm font-semibold text-gray-700">Description</th>
+              <th class="py-3 px-4 text-left text-sm font-semibold text-gray-700">Category</th>
+              <th class="py-3 px-4 text-left text-sm font-semibold text-gray-700">Price</th>
+              <th class="py-3 px-4 text-left text-sm font-semibold text-gray-700">Sale Price</th>
+              <th class="py-3 px-4 text-left text-sm font-semibold text-gray-700">Stock</th>
+              <th class="py-3 px-4 text-left text-sm font-semibold text-gray-700">Colors</th>
+              <th class="py-3 px-4 text-left text-sm font-semibold text-gray-700">Sizes</th>
+              <th class="py-3 px-4 text-center text-sm font-semibold text-gray-700">Actions</th>
+            </tr>
+          </thead>
+          <tbody id="product-list">
+            <!-- Product rows will be injected here -->
+          </tbody>
+        </table>
+      </div>
+
+      <div class="mt-8">
+        <a href="../addProduct/index.html"><button class="bg-blue-500 text-white px-6 py-2 rounded-lg shadow hover:bg-blue-600 transition">Add New Product</button></a>
+      </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-white shadow-md py-4 text-center text-sm text-gray-500 border-t border-gray-200">
+      &copy; 2025 Products Dashboard. All rights reserved.
+    </footer>
+  </div>
+
+  <script>
+    // Fetch all products from the server
+    fetch('/api/products') // Adjust the URL to your backend endpoint
+      .then(response => response.json())
+      .then(responseData => {
+        const products = responseData.data; // Access the "data" array from the response
+
+        const productList = document.getElementById('product-list');
+        products.forEach(product => {
+          const row = document.createElement('tr');
+          row.classList.add('border-b', 'hover:bg-gray-50');
+          
+          row.innerHTML = `
+            <td class="py-4 px-4"><img src="http://localhost:3000/uploads/${product.image}" alt="${product.name}" class="product-image"></td>
+            <td class="py-4 px-4">${product.name}</td>
+            <td class="py-4 px-4 description">${product.description}</td>
+            <td class="py-4 px-4">${product.category}</td>
+            <td class="py-4 px-4">$${product.price}</td>
+            <td class="py-4 px-4">$${product.salePrice || 'N/A'}</td>
+            <td class="py-4 px-4">${product.stock > 0 ? 'In Stock' : 'Out of Stock'}</td>
+            <td class="py-4 px-4">${product.colors.join(', ')}</td>
+            <td class="py-4 px-4">${product.sizes.join(', ')}</td>
+            <td class="py-4 px-4 text-center">
+              <button class="text-blue-600 hover:underline mr-2">Edit</button>
+              <button class="text-red-600 hover:underline">Delete</button>
+            </td>
+          `;
+          
+          productList.appendChild(row);
+        });
+      })
+      .catch(err => console.error('Error fetching products:', err));
+  </script>
+</body>
+</html>

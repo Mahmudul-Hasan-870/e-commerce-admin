@@ -1,5 +1,5 @@
 const express = require('express');
-const { order, orders } = require('../controllers/OrderController');  // Import the getUserOrders function
+const { order, orders } = require('../controllers/OrderController'); 
 const isAuthenticated = require('../middleware/auth');
 
 const router = express.Router();

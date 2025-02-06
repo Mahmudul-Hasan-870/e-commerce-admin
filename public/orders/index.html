@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Orders Page</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link
+      href="https://cdn.jsdelivr.net/npm/remixicon/fonts/remixicon.css"
+      rel="stylesheet"
+    />
+  </head>
+  <body class="bg-gray-50 min-h-screen">
+    <div class="flex flex-col min-h-screen">
+      <header class="bg-white shadow-md py-4 px-6 border-b border-gray-200">
+        <h1 class="text-2xl font-bold text-gray-800 flex items-center">
+          <i class="ri-file-list-3-line text-blue-500 text-3xl mr-2"></i>
+          Orders
+        </h1>
+      </header>
+
+      <main class="flex-1 p-10">
+        <h2 class="text-xl font-semibold text-gray-800 mb-6">Recent Orders</h2>
+        <div class="overflow-x-auto">
+          <table class="min-w-full bg-white shadow-lg rounded-xl">
+            <thead class="bg-blue-100">
+              <tr>
+                <th class="py-3 px-4 text-left text-sm font-semibold text-gray-700">Order ID</th>
+                <th class="py-3 px-4 text-left text-sm font-semibold text-gray-700">Customer</th>
+                <th class="py-3 px-4 text-left text-sm font-semibold text-gray-700">Date</th>
+                <th class="py-3 px-4 text-left text-sm font-semibold text-gray-700">Status</th>
+                <th class="py-3 px-4 text-left text-sm font-semibold text-gray-700">Total</th>
+                <th class="py-3 px-4 text-center text-sm font-semibold text-gray-700">Actions</th>
+              </tr>
+            </thead>
+            <tbody id="orders-table-body"></tbody>
+          </table>
+        </div>
+        <div class="mt-8">
+          <a href="../addOrder/index.html">
+            <button class="bg-blue-500 text-white px-6 py-2 rounded-lg shadow hover:bg-blue-600 transition">
+              Add New Order
+            </button>
+          </a>
+        </div>
+      </main>
+
+      <footer class="bg-white shadow-md py-4 text-center text-sm text-gray-500 border-t border-gray-200">
+        &copy; 2025 Orders Dashboard. All rights reserved.
+      </footer>
+    </div>
+
+    <!-- Modal Structure -->
+    <div id="orderModal" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+      <div class="bg-white p-6 rounded-lg shadow-lg w-96">
+        <h2 class="text-xl font-semibold mb-4">Order Details</h2>
+        <div id="orderDetails" class="text-gray-700"></div>
+        <button id="closeModal" class="mt-4 bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">Close</button>
+      </div>
+    </div>
+
+    <script>
+      document.addEventListener('DOMContentLoaded', () => {
+        const ordersTableBody = document.querySelector('#orders-table-body');
+        const modal = document.querySelector('#orderModal');
+        const orderDetails = document.querySelector('#orderDetails');
+        const closeModal = document.querySelector('#closeModal');
+
+        async function fetchOrders() {
+          try {
+            const response = await fetch('/api/admin/orders', {
+              method: 'GET'
+            });
+
+            if (!response.ok) {
+              throw new Error('Failed to fetch orders');
+            }
+
+            const data = await response.json();
+            if (data.success && data.data) {
+              renderOrders(data.data);
+            }
+          } catch (error) {
+            console.error('Error:', error);
+          }
+        }
+
+        function renderOrders(orders) {
+          ordersTableBody.innerHTML = '';
+          if (orders.length === 0) {
+            ordersTableBody.innerHTML = `
+              <tr>
+                <td colspan="6" class="py-4 px-4 text-center text-gray-500">No orders available</td>
+              </tr>
+            `;
+            return;
+          }
+
+          orders.forEach((order) => {
+            const totalAmount = order.items.reduce(
+              (sum, item) => sum + parseFloat(item.price) * item.quantity,
+              0
+            );
+            const row = `
+              <tr class="border-b hover:bg-gray-50">
+                <td class="py-4 px-4">#${order._id}</td>
+                <td class="py-4 px-4">${order.delivery_address[0]?.firstName} ${order.delivery_address[0]?.lastName}</td>
+                <td class="py-4 px-4">${new Date(order.createdAt).toLocaleDateString()}</td>
+                <td class="py-4 px-4">
+                  <span class="text-sm text-yellow-600 bg-yellow-100 px-2 py-1 rounded-lg">${order.order_status}</span>
+                </td>
+                <td class="py-4 px-4">$${totalAmount.toFixed(2)}</td>
+                <td class="py-4 px-4 text-center">
+                  <button class="text-blue-600 hover:underline mr-2 view-order" data-order='${JSON.stringify(order)}'>View</button>
+                  <button class="text-red-600 hover:underline">Cancel</button>
+                </td>
+              </tr>`;
+            ordersTableBody.insertAdjacentHTML('beforeend', row);
+          });
+
+          document.querySelectorAll('.view-order').forEach((button) => {
+            button.addEventListener('click', (e) => {
+              const order = JSON.parse(e.target.dataset.order);
+              showOrderDetails(order);
+            });
+          });
+        }
+
+        function showOrderDetails(order) {
+          const itemsList = order.items
+            .map(
+              (item) => `
+              <li>
+                <strong>${item.title}</strong> - $${item.price} x ${item.quantity}
+              </li>
+            `
+            )
+            .join('');
+
+          orderDetails.innerHTML = `
+            <p><strong>Order ID:</strong> ${order._id}</p>
+            <p><strong>Status:</strong> ${order.order_status}</p>
+            <p><strong>Total:</strong> $${order.items.reduce(
+              (sum, item) => sum + parseFloat(item.price) * item.quantity,
+              0
+            ).toFixed(2)}</p>
+            <p><strong>Delivery Address:</strong> ${order.delivery_address[0]?.address}, ${order.delivery_address[0]?.city}</p>
+            <p><strong>Phone Number:</strong> ${order.delivery_address[0]?.phoneNumber}</p>
+            <p><strong>Payment Status:</strong> ${order.payment_status}</p>
+            <p><strong>Delivery Option:</strong> ${order.delivery_option}</p>
+            <p><strong>Items:</strong></p>
+            <ul>${itemsList}</ul>
+          `;
+
+          modal.classList.remove('hidden');
+        }
+
+        closeModal.addEventListener('click', () => {
+          modal.classList.add('hidden');
+        });
+
+        fetchOrders();
+      });
+    </script>
+  </body>
+</html>
