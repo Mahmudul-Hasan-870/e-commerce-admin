@@ -86,31 +86,48 @@
   <script>
     // Fetch total users and active users from backend
     async function fetchUserStats() {
-      try {
-        const totalUsersResponse = await fetch('/api/admin/total-users'); // Replace with your API endpoint
-        const activeUsersResponse = await fetch('/api/admin/active-users'); // Replace with your API endpoint
-        
-        const totalUsersData = await totalUsersResponse.json();
-        const activeUsersData = await activeUsersResponse.json();
-
-        if (totalUsersData.status === 'success') {
-          document.getElementById('totalUsers').textContent = totalUsersData.data; // Update the "Total Users" card
-        } else {
-          document.getElementById('totalUsers').textContent = 'Error';
-        }
-
-        if (activeUsersData.status === 'success') {
-          document.getElementById('activeUsers').textContent = activeUsersData.data; // Update the "Active Users" card
-        } else {
-          document.getElementById('activeUsers').textContent = 'Error';
-        }
-        
-      } catch (error) {
-        console.error('Error fetching user stats:', error);
-        document.getElementById('totalUsers').textContent = 'Error';
-        document.getElementById('activeUsers').textContent = 'Error';
-      }
+  try {
+    const token = localStorage.getItem('adminToken');
+    if (!token) {
+      window.location.href = '../index.html'; // Redirect to the login page if no token is found
+      return;
     }
+
+    const totalUsersResponse = await fetch('/api/admin/total-users', {
+      method: 'GET',
+      headers: {
+        'Authorization': `Bearer ${token}`, // Include the token in the Authorization header
+      },
+    });
+
+    const activeUsersResponse = await fetch('/api/admin/active-users', {
+      method: 'GET',
+      headers: {
+        'Authorization': `Bearer ${token}`, // Include the token in the Authorization header
+      },
+    });
+
+    const totalUsersData = await totalUsersResponse.json();
+    const activeUsersData = await activeUsersResponse.json();
+
+    if (totalUsersData.status === 'success') {
+      document.getElementById('totalUsers').textContent = totalUsersData.data; // Update the "Total Users" card
+    } else {
+      document.getElementById('totalUsers').textContent = 'Error';
+    }
+
+    if (activeUsersData.status === 'success') {
+      document.getElementById('activeUsers').textContent = activeUsersData.data; // Update the "Active Users" card
+    } else {
+      document.getElementById('activeUsers').textContent = 'Error';
+    }
+
+  } catch (error) {
+    console.error('Error fetching user stats:', error);
+    document.getElementById('totalUsers').textContent = 'Error';
+    document.getElementById('activeUsers').textContent = 'Error';
+  }
+}
 
     // Call the function to fetch total users and active users when the page loads
     fetchUserStats();

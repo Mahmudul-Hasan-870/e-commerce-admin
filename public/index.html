@@ -3,59 +3,66 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Ecommerce - Admin</title>
+  <title>Admin Panel Login</title>
   <script src="https://cdn.tailwindcss.com"></script>
-  <link href="https://cdn.jsdelivr.net/npm/remixicon/fonts/remixicon.css" rel="stylesheet">
 </head>
-<body class="bg-gray-50">
-  <div class="flex min-h-screen">
-    <!-- Sidebar -->
-    <div class="w-64 bg-white shadow-lg">
-      <div class="p-6 border-b border-gray-200">
-        <h1 class="text-2xl font-bold text-gray-800 flex items-center">
-          <i class="ri-dashboard-line text-blue-500 text-3xl mr-2"></i>
-          Dashboard Menu
-        </h1>
+<body class="flex items-center justify-center min-h-screen bg-gray-100">
+  <div class="w-full max-w-md p-8 bg-white rounded-xl shadow-md">
+    <h1 class="text-2xl font-semibold text-center text-gray-700">Admin Login</h1>
+
+    <form id="loginForm" class="mt-6">
+      <div class="mb-4">
+        <label for="username" class="block text-sm font-medium text-gray-600">Username</label>
+        <input type="text" id="username" name="username" class="w-full p-2 mt-1 border rounded-md focus:ring focus:ring-indigo-300" required>
       </div>
-      <nav class="mt-4">
-        <a href="index.html" class="flex items-center py-3 px-4 rounded-lg hover:bg-blue-100 transition duration-200 text-gray-700">
-          <i class="ri-home-line text-lg mr-3 text-blue-500"></i> Home
-        </a>
-        <a href="Products/index.html" class="flex items-center py-3 px-4 rounded-lg hover:bg-blue-100 transition duration-200 text-gray-700">
-          <i class="ri-shopping-cart-line text-lg mr-3 text-green-500"></i> Products
-        </a>
-        <a href="orders/index.html" class="flex items-center py-3 px-4 rounded-lg hover:bg-blue-100 transition duration-200 text-gray-700">
-          <i class="ri-file-list-3-line text-lg mr-3 text-purple-500"></i> Orders
-        </a>
-      </nav>
-    </div>
-
-    <!-- Main Content -->
-    <div class="flex-1 p-10 bg-gray-50">
-      <h1 class="text-3xl font-bold text-gray-800">Welcome to the Dashboard</h1>
-      <p class="mt-4 text-gray-600">This is the main content area where information is displayed.</p>
-
-      <div class="mt-8 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-
-        <a href="statistics/index.html" class="p-6 bg-white shadow-lg rounded-xl border border-gray-200 hover:shadow-xl transition">
-          <i class="ri-bar-chart-box-line text-4xl text-blue-600"></i>
-          <h2 class="mt-4 text-xl font-semibold text-gray-800">Statistics</h2>
-          <p class="mt-2 text-gray-600">Analyze your data with clear insights.</p>
-        </a>
-
-        <a href="getUsers/index.html" class="p-6 bg-white shadow-lg rounded-xl border border-gray-200 hover:shadow-xl transition">
-          <i class="ri-user-3-line text-4xl text-green-600"></i>
-          <h2 class="mt-4 text-xl font-semibold text-gray-800">User Profiles</h2>
-          <p class="mt-2 text-gray-600">Manage and track user information easily.</p>
-        </a>
-        
-        <a href="settings.html" class="p-6 bg-white shadow-lg rounded-xl border border-gray-200 hover:shadow-xl transition">
-          <i class="ri-settings-3-line text-4xl text-indigo-600"></i> 
-          <h2 class="mt-4 text-xl font-semibold text-gray-800">Settings</h2> 
-          <p class="mt-2 text-gray-600">Manage your account and preferences.</p> 
-        </a>              
+      <div class="mb-4">
+        <label for="password" class="block text-sm font-medium text-gray-600">Password</label>
+        <input type="password" id="password" name="password" class="w-full p-2 mt-1 border rounded-md focus:ring focus:ring-indigo-300" required>
       </div>
-    </div>
+      <button type="submit" class="w-full p-2 mt-4 text-white bg-indigo-600 rounded-lg hover:bg-indigo-700">Login</button>
+    </form>
   </div>
+
+  <script>
+    const adminCredentials = {
+      username: 'admin',
+      password: 'password123'
+    };
+
+    // Show alert function
+    function showAlert(message, type) {
+      const alert = document.createElement('div');
+      alert.className = `fixed top-4 right-4 z-50 p-4 text-sm rounded-lg shadow-md ${
+        type === 'success' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'
+      }`;
+
+      alert.innerText = message;
+      document.body.appendChild(alert);
+
+      setTimeout(() => {
+        alert.remove();
+      }, 3000);
+    }
+
+    function generateToken() {
+      return btoa(`${adminCredentials.username}:${new Date().getTime()}`);
+    }
+
+    document.getElementById('loginForm').addEventListener('submit', function (e) {
+      e.preventDefault();
+
+      const username = document.getElementById('username').value;
+      const password = document.getElementById('password').value;
+
+      if (username === adminCredentials.username && password === adminCredentials.password) {
+        const token = generateToken();
+        localStorage.setItem('adminToken', token);
+        showAlert('Login successful!', 'success');
+        window.location.href = 'admin/dashboard.html'; // Redirect to dashboard
+      } else {
+        showAlert('Invalid credentials. Please try again.', 'error');
+      }
+    });
+  </script>
 </body>
 </html>

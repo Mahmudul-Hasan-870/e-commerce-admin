@@ -69,36 +69,47 @@
 
   <script>
     // Fetch all products from the server
-    fetch('/api/products') // Adjust the URL to your backend endpoint
-      .then(response => response.json())
-      .then(responseData => {
-        const products = responseData.data; // Access the "data" array from the response
-
-        const productList = document.getElementById('product-list');
-        products.forEach(product => {
-          const row = document.createElement('tr');
-          row.classList.add('border-b', 'hover:bg-gray-50');
-          
-          row.innerHTML = `
-            <td class="py-4 px-4"><img src="http://localhost:3000/uploads/${product.image}" alt="${product.name}" class="product-image"></td>
-            <td class="py-4 px-4">${product.name}</td>
-            <td class="py-4 px-4 description">${product.description}</td>
-            <td class="py-4 px-4">${product.category}</td>
-            <td class="py-4 px-4">$${product.price}</td>
-            <td class="py-4 px-4">$${product.salePrice || 'N/A'}</td>
-            <td class="py-4 px-4">${product.stock > 0 ? 'In Stock' : 'Out of Stock'}</td>
-            <td class="py-4 px-4">${product.colors.join(', ')}</td>
-            <td class="py-4 px-4">${product.sizes.join(', ')}</td>
-            <td class="py-4 px-4 text-center">
-              <button class="text-blue-600 hover:underline mr-2">Edit</button>
-              <button class="text-red-600 hover:underline">Delete</button>
-            </td>
-          `;
-          
-          productList.appendChild(row);
-        });
+    const token = localStorage.getItem('adminToken');
+    if (!token) {
+      window.location.href = '../index.html'; // Redirect to login if no token is found
+    } else {
+      fetch('/api/products', {
+        method: 'GET',
+        headers: {
+          'Authorization': `Bearer ${token}`, // Include the token in the Authorization header
+        },
       })
-      .catch(err => console.error('Error fetching products:', err));
+        .then(response => response.json())
+        .then(responseData => {
+          const products = responseData.data; // Access the "data" array from the response
+  
+          const productList = document.getElementById('product-list');
+          products.forEach(product => {
+            const row = document.createElement('tr');
+            row.classList.add('border-b', 'hover:bg-gray-50');
+            
+            row.innerHTML = `
+              <td class="py-4 px-4"><img src="http://localhost:3000/uploads/${product.image}" alt="${product.name}" class="product-image"></td>
+              <td class="py-4 px-4">${product.name}</td>
+              <td class="py-4 px-4 description">${product.description}</td>
+              <td class="py-4 px-4">${product.category}</td>
+              <td class="py-4 px-4">$${product.price}</td>
+              <td class="py-4 px-4">$${product.salePrice || 'N/A'}</td>
+              <td class="py-4 px-4">${product.stock > 0 ? 'In Stock' : 'Out of Stock'}</td>
+              <td class="py-4 px-4">${product.colors.join(', ')}</td>
+              <td class="py-4 px-4">${product.sizes.join(', ')}</td>
+              <td class="py-4 px-4 text-center">
+                <button class="text-blue-600 hover:underline mr-2">Edit</button>
+                <button class="text-red-600 hover:underline">Delete</button>
+              </td>
+            `;
+            
+            productList.appendChild(row);
+          });
+        })
+        .catch(err => console.error('Error fetching products:', err));
+    }
   </script>
+  
 </body>
 </html>

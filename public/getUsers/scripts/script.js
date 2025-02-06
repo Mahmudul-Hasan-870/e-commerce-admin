@@ -9,13 +9,25 @@ document.addEventListener('DOMContentLoaded', () => {
 
 async function fetchUsers() {
   try {
-    const response = await fetch('/api/admin/users', { method: 'GET' });
+    const token = localStorage.getItem('adminToken');
+    if (!token) {
+      window.location.href = '../index.html'; // Redirect to the login page
+      return;
+    }
+
+    const response = await fetch('/api/admin/users', {
+      method: 'GET',
+      headers: {
+        'Authorization': `Bearer ${token}`, // Include the token in the Authorization header
+      },
+    });
+
     const data = await response.json();
     if (data.status === 'success') {
       allUsers = data.data; // Store all users
-      displayUsers(allUsers);
+      displayUsers(allUsers); // Display users in the UI
     } else {
-      console.log(data.message);
+      console.log(data.message); // Handle error messages from the API
     }
   } catch (err) {
     console.error('Error fetching users:', err);
@@ -53,7 +65,7 @@ function filterUsers(e) {
     return user.name.toLowerCase().includes(searchQuery) || user.email.toLowerCase().includes(searchQuery);
   });
 
-  displayUsers(filteredUsers); // Display filtered users
+  displayUsers(filteredUsers);
 }
 
 function openEditModal(id, name, email, password, isLogged) {
@@ -66,24 +78,29 @@ function openEditModal(id, name, email, password, isLogged) {
   nameInput.value = name;
   emailInput.value = email;
   passwordInput.value = password;
-  isLoggedSelect.value = isLogged;
+  isLoggedSelect.value = isLogged.toString(); // Ensure the value is a string for the select input
 
   modal.classList.remove('hidden');
 
   document.getElementById('edit-user-form').onsubmit = async (e) => {
     e.preventDefault();
+
     const updatedUser = {
       name: nameInput.value,
       email: emailInput.value,
-      password: passwordInput.value,
-      isLogged: isLoggedSelect.value === 'true'
+      password: passwordInput.value || undefined, // Don't send empty password unless it's defined
+      isLogged: isLoggedSelect.value === 'true', // Convert string 'true'/'false' to boolean
     };
 
+    const token = localStorage.getItem('adminToken');
     try {
       const response = await fetch(`/api/admin/users/${id}`, {
         method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(updatedUser)
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`, // Add the token to the Authorization header
+        },
+        body: JSON.stringify(updatedUser),
       });
 
       const data = await response.json();
@@ -108,14 +125,19 @@ function closeEditModal() {
 async function deleteUser(id) {
   const confirmDelete = confirm("Are you sure you want to delete this user?");
   if (confirmDelete) {
+    const token = localStorage.getItem('adminToken');
     try {
       const response = await fetch(`/api/admin/users/${id}`, {
         method: 'DELETE',
+        headers: {
+          'Authorization': `Bearer ${token}`, // Add token to the DELETE request
+        },
       });
+
       const data = await response.json();
       if (data.status === 'success') {
         showAlert('User deleted successfully!', 'success');
-        fetchUsers(); // Reload the user list
+        fetchUsers();
       } else {
         showAlert(data.message, 'error');
       }

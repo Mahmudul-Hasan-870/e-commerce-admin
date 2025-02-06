@@ -67,23 +67,33 @@
         const closeModal = document.querySelector('#closeModal');
 
         async function fetchOrders() {
-          try {
-            const response = await fetch('/api/admin/orders', {
-              method: 'GET'
-            });
+  try {
+    const token = localStorage.getItem('adminToken');
+    if (!token) {
+      window.location.href = '../index.html'; // Redirect to login if no token is found
+      return;
+    }
 
-            if (!response.ok) {
-              throw new Error('Failed to fetch orders');
-            }
+    const response = await fetch('/api/admin/orders', {
+      method: 'GET',
+      headers: {
+        'Authorization': `Bearer ${token}`, // Include the token in the Authorization header
+      },
+    });
 
-            const data = await response.json();
-            if (data.success && data.data) {
-              renderOrders(data.data);
-            }
-          } catch (error) {
-            console.error('Error:', error);
-          }
-        }
+    if (!response.ok) {
+      throw new Error('Failed to fetch orders');
+    }
+
+    const data = await response.json();
+    if (data.success && data.data) {
+      renderOrders(data.data); // Call the renderOrders function to display the orders
+    }
+  } catch (error) {
+    console.error('Error:', error);
+  }
+}
+
 
         function renderOrders(orders) {
           ordersTableBody.innerHTML = '';
