@@ -6,6 +6,7 @@
   <title>Ecommerce - Admin</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <link href="https://cdn.jsdelivr.net/npm/remixicon/fonts/remixicon.css" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 <body class="bg-gray-50">
   <div class="flex min-h-screen">
@@ -14,7 +15,7 @@
       <div class="p-6 border-b border-gray-200">
         <h1 class="text-2xl font-bold text-gray-800 flex items-center">
           <i class="ri-dashboard-line text-blue-500 text-3xl mr-2"></i>
-          Dashboard Menu
+          Menu
         </h1>
       </div>
       <nav class="mt-4">
@@ -27,35 +28,249 @@
         <a href="../orders/index.html" class="flex items-center py-3 px-4 rounded-lg hover:bg-blue-100 transition duration-200 text-gray-700">
           <i class="ri-file-list-3-line text-lg mr-3 text-purple-500"></i> Orders
         </a>
+        <a href="../getUsers/index.html" class="flex items-center py-3 px-4 rounded-lg hover:bg-blue-100 transition duration-200 text-gray-700">
+          <i class="ri-user-line text-lg mr-3 text-orange-500"></i> Users
+        </a>
       </nav>
     </div>
 
     <!-- Main Content -->
-    <div class="flex-1 p-10 bg-gray-50">
-      <h1 class="text-3xl font-bold text-gray-800">Welcome to the Dashboard</h1>
-      <p class="mt-4 text-gray-600">This is the main content area where information is displayed.</p>
+    <div class="flex-1 flex flex-col">
+      <!-- Header -->
+      <header class="bg-white shadow-md py-4 px-6 border-b border-gray-200">
+        <h1 class="text-2xl font-bold text-gray-800">Dashboard</h1>
+      </header>
 
-      <div class="mt-8 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      <main class="flex-1 p-10">
+        <!-- Stats Cards -->
+        <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
+          <div class="p-6 bg-white shadow-lg rounded-xl border border-gray-200">
+            <div class="flex items-center justify-between">
+              <h2 class="text-lg font-semibold text-gray-800">Total Users</h2>
+              <i class="ri-team-line text-3xl text-green-600"></i>
+            </div>
+            <p class="mt-4 text-3xl font-bold text-gray-900" id="totalUsers">Loading...</p>
+          </div>
 
-        <a href="../statistics/index.html" class="p-6 bg-white shadow-lg rounded-xl border border-gray-200 hover:shadow-xl transition">
-          <i class="ri-bar-chart-box-line text-4xl text-blue-600"></i>
-          <h2 class="mt-4 text-xl font-semibold text-gray-800">Statistics</h2>
-          <p class="mt-2 text-gray-600">Analyze your data with clear insights.</p>
-        </a>
+          <div class="p-6 bg-white shadow-lg rounded-xl border border-gray-200">
+            <div class="flex items-center justify-between">
+              <h2 class="text-lg font-semibold text-gray-800">Active Users</h2>
+              <i class="ri-team-line text-3xl text-blue-600"></i>
+            </div>
+            <p class="mt-4 text-3xl font-bold text-gray-900" id="activeUsers">Loading...</p>
+          </div>
 
-        <a href="../getUsers/index.html" class="p-6 bg-white shadow-lg rounded-xl border border-gray-200 hover:shadow-xl transition">
-          <i class="ri-user-3-line text-4xl text-green-600"></i>
-          <h2 class="mt-4 text-xl font-semibold text-gray-800">User Profiles</h2>
-          <p class="mt-2 text-gray-600">Manage and track user information easily.</p>
-        </a>
-        
-        <a href="settings.html" class="p-6 bg-white shadow-lg rounded-xl border border-gray-200 hover:shadow-xl transition">
-          <i class="ri-settings-3-line text-4xl text-indigo-600"></i> 
-          <h2 class="mt-4 text-xl font-semibold text-gray-800">Settings</h2> 
-          <p class="mt-2 text-gray-600">Manage your account and preferences.</p> 
-        </a>              
-      </div>
+          <div class="p-6 bg-white shadow-lg rounded-xl border border-gray-200">
+            <div class="flex items-center justify-between">
+              <h2 class="text-lg font-semibold text-gray-800">Total Revenue</h2>
+              <i class="ri-money-dollar-circle-line text-3xl text-yellow-600"></i>
+            </div>
+            <p class="mt-4 text-3xl font-bold text-gray-900" id="totalRevenue">Loading...</p>
+          </div>          
+        </div>
+
+        <!-- Charts Section -->
+        <div class="mt-8 grid grid-cols-1 xl:grid-cols-2 gap-6">
+
+            <!-- Order Status Multi-Line Chart -->
+            <div class="p-6 bg-white shadow-lg rounded-xl border border-gray-200">
+              <h2 class="text-xl font-semibold text-gray-800">Order Status</h2>
+              <canvas id="orderStatusChart" class="h-48"></canvas>
+            </div>
+
+         <!-- Monthly Sales Chart -->
+          <div class="p-6 bg-white shadow-lg rounded-xl border border-gray-200">
+            <h2 class="text-xl font-semibold text-gray-800">Monthly Sales</h2>
+            <canvas id="salesChart" class="h-48"></canvas>
+          </div>
+
+             <!-- User Growth Chart -->
+             <div class="p-6 bg-white shadow-lg rounded-xl border border-gray-200">
+              <h2 class="text-xl font-semibold text-gray-800">User Growth</h2>
+              <canvas id="growthChart" class="h-48"></canvas>
+            </div>
+
+          <!-- Total Orders Chart -->
+          <div class="p-6 bg-white shadow-lg rounded-xl border border-gray-200">
+            <h2 class="text-xl font-semibold text-gray-800">Total Orders</h2>
+            <canvas id="totalOrdersChart" class="h-48"></canvas>
+          </div>
+        </div>
+      </main>
+
+      <!-- Footer -->
+      <footer class="bg-white shadow-md py-4 text-center text-sm text-gray-500 border-t border-gray-200">
+        &copy; 2025 Dashboard. All rights reserved.
+      </footer>
     </div>
   </div>
+
+  <script>
+        async function fetchUserStats() {
+      try {
+        const token = localStorage.getItem('adminToken');
+        if (!token) {
+          window.location.href = '../index.html';
+          return;
+        }
+  
+        const totalUsersResponse = await fetch('/api/admin/total-users', {
+          method: 'GET',
+          headers: { 'Authorization': `Bearer ${token}` },
+        });
+  
+        const activeUsersResponse = await fetch('/api/admin/active-users', {
+          method: 'GET',
+          headers: { 'Authorization': `Bearer ${token}` },
+        });
+  
+        const totalUsersData = await totalUsersResponse.json();
+        const activeUsersData = await activeUsersResponse.json();
+  
+        document.getElementById('totalUsers').textContent = totalUsersData.data || 'Error';
+        document.getElementById('activeUsers').textContent = activeUsersData.data || 'Error';
+      } catch (error) {
+        console.error('Error fetching user stats:', error);
+        document.getElementById('totalUsers').textContent = 'Error';
+        document.getElementById('activeUsers').textContent = 'Error';
+      }
+    }
+    async function fetchTotalRevenue() {
+      try {
+        const token = localStorage.getItem('adminToken');
+        if (!token) {
+          window.location.href = '../index.html';
+          return;
+        }
+  
+        const response = await fetch('/api/admin/total-revenue', {
+          method: 'GET',
+          headers: { 'Authorization': `Bearer ${token}` },
+        });
+  
+        const revenueData = await response.json();
+  
+        document.getElementById('totalRevenue').textContent =
+          revenueData.data ? `$${revenueData.data}` : 'Error';
+      } catch (error) {
+        console.error('Error fetching total revenue:', error);
+        document.getElementById('totalRevenue').textContent = 'Error';
+      }
+    }
+    async function fetchOrderStatusData() {
+      try {
+        const token = localStorage.getItem('adminToken');
+        if (!token) {
+          window.location.href = '../index.html';
+          return;
+        }
+
+        const response = await fetch('/api/admin/order-status', {
+          method: 'GET',
+          headers: { 'Authorization': `Bearer ${token}` },
+        });
+
+        const orderStatusData = await response.json();
+        
+        if (orderStatusData.success) {
+          const successfulOrders = orderStatusData.data.successfulOrders;
+          const cancelledOrders = orderStatusData.data.cancelledOrders;
+          
+          // Update Order Status Chart
+          orderStatusChart.data.datasets[0].data = successfulOrders;
+          orderStatusChart.data.datasets[1].data = cancelledOrders;
+          orderStatusChart.update();
+        } else {
+          console.error('Error fetching order status:', orderStatusData.message);
+        }
+
+      } catch (error) {
+        console.error('Error fetching order status data:', error);
+      }
+    }
+
+    async function fetchTotalOrdersData() {
+      try {
+        const token = localStorage.getItem('adminToken');
+        if (!token) {
+          window.location.href = '../index.html';
+          return;
+        }
+
+        const response = await fetch('/api/admin/total-orders', {
+          method: 'GET',
+          headers: { 'Authorization': `Bearer ${token}` },
+        });
+
+        const totalOrdersData = await response.json();
+        
+        if (totalOrdersData.success) {
+          const totalOrders = totalOrdersData.data.totalOrders;
+
+          // Update Total Orders Chart
+          totalOrdersChart.data.datasets[0].data = totalOrders;
+          totalOrdersChart.update();
+        } else {
+          console.error('Error fetching total orders:', totalOrdersData.message);
+        }
+
+      } catch (error) {
+        console.error('Error fetching total orders data:', error);
+      }
+    }
+
+    // Fetch data for the charts
+    fetchUserStats();
+    fetchTotalRevenue();
+    fetchOrderStatusData();
+    fetchTotalOrdersData();
+
+    var ctx2 = document.getElementById('salesChart').getContext('2d');
+    var salesChart = new Chart(ctx2, {
+      type: 'line',
+      data: { labels: ['January', 'February', 'March', 'April', 'May', 'June'], datasets: [{ label: 'Sales ($)', data: [1200, 1500, 1300, 1700, 1600, 1800], borderColor: 'rgba(75, 192, 192, 1)', backgroundColor: 'rgba(75, 192, 192, 0.2)', borderWidth: 2 }] },
+      options: { responsive: true, scales: { y: { beginAtZero: true } } }
+    });
+
+    var ctx3 = document.getElementById('growthChart').getContext('2d');
+    var growthChart = new Chart(ctx3, {
+      type: 'bar',
+      data: { labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'], datasets: [{ label: 'New Users', data: [50, 75, 100, 150, 200, 250], backgroundColor: 'rgba(54, 162, 235, 0.5)', borderColor: 'rgba(54, 162, 235, 1)', borderWidth: 2 }] },
+      options: { responsive: true, scales: { y: { beginAtZero: true } } }
+    });
+
+    // Initialize the charts (Order Status)
+    var ctx = document.getElementById('orderStatusChart').getContext('2d');
+    var orderStatusChart = new Chart(ctx, {
+      type: 'line',
+      data: {
+        labels: ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'],
+        datasets: [
+          { label: 'Successful Orders', data: [75, 80, 85, 90, 92, 95], borderColor: 'rgba(76, 175, 80, 1)', backgroundColor: 'rgba(76, 175, 80, 0.2)', borderWidth: 2 },
+          { label: 'Cancelled Orders', data: [25, 20, 15, 10, 8, 5], borderColor: 'rgba(255, 99, 132, 1)', backgroundColor: 'rgba(255, 99, 132, 0.2)', borderWidth: 2 }
+        ]
+      },
+      options: { responsive: true }
+    });
+
+    // Initialize the charts (Total Orders)
+    var ctx2 = document.getElementById('totalOrdersChart').getContext('2d');
+    var totalOrdersChart = new Chart(ctx2, {
+      type: 'bar',
+      data: {
+        labels: ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'],
+        datasets: [
+          {
+            label: 'Total Orders',
+            data: [120, 130, 140, 150, 160, 170],
+            backgroundColor: 'rgba(0, 123, 255, 0.6)',
+            borderColor: 'rgba(0, 123, 255, 1)',
+            borderWidth: 2
+          }
+        ]
+      },
+      options: { responsive: true }
+    });
+  </script>
 </body>
 </html>

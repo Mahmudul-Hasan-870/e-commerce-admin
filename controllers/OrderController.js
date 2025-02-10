@@ -73,6 +73,95 @@ exports.getUserOrders = async (req, res) => {
   }
 };
 
+// Get Total Revenue
+exports.getTotalRevenue = async (req, res) => {
+  try {
+    // Fetch only successful payment orders
+    const orders = await Order.find({ order_status: 'success' });
+
+    // Calculate total revenue
+    const totalRevenue = orders.reduce((sum, order) => {
+      return sum + order.items.reduce((orderSum, item) => {
+        return orderSum + (parseFloat(item.price) * item.quantity);
+      }, 0);
+    }, 0);
+
+    res.status(200).json({
+      success: true,
+      data: totalRevenue.toFixed(2), // Keep two decimal points
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: 'Server error',
+      error: error.message,
+    });
+  }
+};
+
+// Get Order Status (Success vs. Cancelled Orders)
+exports.getOrderStatus = async (req, res) => {
+  try {
+    const orders = await Order.aggregate([
+      {
+        $group: {
+          _id: { $month: "$createdAt" },
+          successfulOrders: { $sum: { $cond: [{ $eq: ["$order_status", "success"] }, 1, 0] } },
+          cancelledOrders: { $sum: { $cond: [{ $eq: ["$order_status", "cancelled"] }, 1, 0] } }
+        }
+      },
+      { $sort: { _id: 1 } } // Sort by month
+    ]);
+
+    const result = {
+      successfulOrders: orders.map(order => order.successfulOrders),
+      cancelledOrders: orders.map(order => order.cancelledOrders),
+    };
+
+    res.status(200).json({
+      success: true,
+      data: result,
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: 'Server error',
+      error: error.message,
+    });
+  }
+};
+
+// Get Total Orders by Month
+exports.getTotalOrders = async (req, res) => {
+  try {
+    const orders = await Order.aggregate([
+      {
+        $group: {
+          _id: { $month: "$createdAt" },
+          totalOrders: { $sum: 1 }
+        }
+      },
+      { $sort: { _id: 1 } } // Sort by month
+    ]);
+
+    const result = {
+      totalOrders: orders.map(order => order.totalOrders),
+    };
+
+    res.status(200).json({
+      success: true,
+      data: result,
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: 'Server error',
+      error: error.message,
+    });
+  }
+};
+
+
 
 
   
