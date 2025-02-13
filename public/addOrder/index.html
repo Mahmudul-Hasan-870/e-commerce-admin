@@ -5,156 +5,398 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Add New Order</title>
   <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {},
+      },
+    }
+  </script>
+  <script src="/js/theme.js"></script>
   <link href="https://cdn.jsdelivr.net/npm/remixicon/fonts/remixicon.css" rel="stylesheet">
 </head>
-<body class="bg-gray-50 min-h-screen">
+<body class="bg-gray-50 dark:bg-gray-900 min-h-screen transition-colors duration-200">
+  <div id="alertDialog" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+    <div class="bg-white dark:bg-gray-800 rounded-lg p-6 max-w-sm w-full mx-4 transform transition-all">
+      <div class="text-center">
+        <!-- Success Icon -->
+        <div id="successIcon" class="hidden mx-auto mb-4">
+          <div class="rounded-full bg-green-100 p-4 dark:bg-green-900 inline-block">
+            <svg class="w-12 h-12 text-green-500 dark:text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+            </svg>
+          </div>
+        </div>
+        <!-- Error Icon -->
+        <div id="errorIcon" class="hidden mx-auto mb-4">
+          <div class="rounded-full bg-red-100 p-4 dark:bg-red-900 inline-block">
+            <svg class="w-12 h-12 text-red-500 dark:text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+            </svg>
+          </div>
+        </div>
+        <h3 id="dialogTitle" class="text-lg font-medium text-gray-900 dark:text-white mb-2"></h3>
+        <p id="dialogMessage" class="text-sm text-gray-500 dark:text-gray-400"></p>
+        <div class="mt-6">
+          <button id="dialogButton" class="w-full px-4 py-2 text-sm font-medium text-white rounded-lg focus:outline-none focus:ring-2 focus:ring-offset-2"></button>
+        </div>
+      </div>
+    </div>
+  </div>
   <div class="flex flex-col min-h-screen">
     <!-- Header -->
-    <header class="bg-white shadow-md py-4 px-6 border-b border-gray-200">
-      <h1 class="text-2xl font-bold text-gray-800 flex items-center">
+    <header class="bg-white dark:bg-gray-800 shadow-md py-4 px-6 border-b border-gray-200 dark:border-gray-700">
+      <h1 class="text-2xl font-bold text-gray-800 dark:text-white flex items-center">
         <i class="ri-shopping-cart-2-line text-green-500 text-3xl mr-2"></i>
         Add New Order
       </h1>
     </header>
 
     <!-- Add Order Form -->
-    <main class="flex-1 p-10">
-      <form class="bg-white p-8 shadow-lg rounded-xl max-w-3xl mx-auto">
-        <!-- Customer Information -->
-        <div class="grid grid-cols-1 gap-6 sm:grid-cols-2">
-            <div class="sm:col-span-2">
-                <label for="shippingTo" class="block text-sm font-medium text-gray-700">Shipping To</label>
-                <input type="text" id="shippingTo" name="shippingTo" class="mt-1 block w-full px-4 py-2 border rounded-lg focus:ring-green-500 focus:border-green-500">
+    <main class="flex-1 p-6 md:p-10">
+      <form class="max-w-4xl mx-auto bg-white dark:bg-gray-800 rounded-xl shadow-lg">
+        <!-- Form Header -->
+        <div class="p-6 border-b border-gray-200 dark:border-gray-700">
+          <h2 class="text-xl font-semibold text-gray-800 dark:text-white">Order Information</h2>
+          <p class="mt-1 text-sm text-gray-500 dark:text-gray-400">Fill in the information below to create a new order.</p>
+        </div>
+
+        <div class="p-6 space-y-6">
+          <!-- Customer Information Section -->
+          <div class="bg-gray-50 dark:bg-gray-700/50 p-4 rounded-lg">
+            <h3 class="text-lg font-medium text-gray-900 dark:text-white mb-4">Customer Information</h3>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div>
+                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">First Name</label>
+                <input type="text" id="firstName" required
+                  class="w-full px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-600 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-white">
               </div>
-          <div>
-            <label for="firstName" class="block text-sm font-medium text-gray-700">First Name</label>
-            <input type="text" id="firstName" name="firstName" class="mt-1 block w-full px-4 py-2 border rounded-lg focus:ring-green-500 focus:border-green-500">
-          </div>
-
-          <div>
-            <label for="lastName" class="block text-sm font-medium text-gray-700">Last Name</label>
-            <input type="text" id="lastName" name="lastName" class="mt-1 block w-full px-4 py-2 border rounded-lg focus:ring-green-500 focus:border-green-500">
-          </div>
-        </div>
-<br>
-        <!-- Delivery Address -->
-        <div class="grid grid-cols-1 gap-6 sm:grid-cols-2">
-            <div>
-                <label for="phoneNumber" class="block text-sm font-medium text-gray-700">Phone Number</label>
-                <input type="tel" id="phoneNumber" name="phoneNumber" class="mt-1 block w-full px-4 py-2 border rounded-lg focus:ring-green-500 focus:border-green-500">
+              <div>
+                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Last Name</label>
+                <input type="text" id="lastName" required
+                  class="w-full px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-600 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-white">
               </div>
-           
-
-          <div>
-            <label for="country" class="block text-sm font-medium text-gray-700">Country</label>
-            <input type="text" id="country" name="country" class="mt-1 block w-full px-4 py-2 border rounded-lg focus:ring-green-500 focus:border-green-500">
+              <div class="md:col-span-2">
+                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Phone Number</label>
+                <input type="tel" id="phoneNumber" required
+                  class="w-full px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-600 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-white">
+              </div>
+            </div>
           </div>
 
-          <div>
-            <label for="address" class="block text-sm font-medium text-gray-700">Address</label>
-            <input type="text" id="address" name="address" class="mt-1 block w-full px-4 py-2 border rounded-lg focus:ring-green-500 focus:border-green-500">
+          <!-- Address Section -->
+          <div class="bg-gray-50 dark:bg-gray-700/50 p-4 rounded-lg">
+            <h3 class="text-lg font-medium text-gray-900 dark:text-white mb-4">Delivery Address</h3>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div class="md:col-span-2">
+                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Street Address</label>
+                <input type="text" id="address" required
+                  class="w-full px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-600 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-white">
+              </div>
+              <div>
+                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">City</label>
+                <input type="text" id="city" required
+                  class="w-full px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-600 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-white">
+              </div>
+              <div>
+                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">State/Province</label>
+                <input type="text" id="state" required
+                  class="w-full px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-600 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-white">
+              </div>
+              <div>
+                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Postal Code</label>
+                <input type="text" id="postalCode" required
+                  class="w-full px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-600 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-white">
+              </div>
+              <div>
+                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Country</label>
+                <input type="text" id="country" required
+                  class="w-full px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-600 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-white">
+              </div>
+            </div>
           </div>
 
-          <div>
-            <label for="city" class="block text-sm font-medium text-gray-700">City</label>
-            <input type="text" id="city" name="city" class="mt-1 block w-full px-4 py-2 border rounded-lg focus:ring-green-500 focus:border-green-500">
+          <!-- Product Section -->
+          <div class="bg-gray-50 dark:bg-gray-700/50 p-4 rounded-lg">
+            <h3 class="text-lg font-medium text-gray-900 dark:text-white mb-4">Product Details</h3>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div class="md:col-span-2">
+                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Product</label>
+                <select id="product" required
+                  class="w-full px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-600 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-white">
+                  <option value="">Select Product</option>
+                </select>
+              </div>
+              <div>
+                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Size</label>
+                <select id="size" required
+                  class="w-full px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-600 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-white">
+                  <option value="">Select Size</option>
+                </select>
+              </div>
+              <div>
+                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Color</label>
+                <select id="color" required
+                  class="w-full px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-600 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-white">
+                  <option value="">Select Color</option>
+                </select>
+              </div>
+              <div>
+                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Quantity</label>
+                <input type="number" id="quantity" required min="1"
+                  class="w-full px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-600 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-white">
+              </div>
+            </div>
           </div>
 
-          <div>
-            <label for="state" class="block text-sm font-medium text-gray-700">State</label>
-            <input type="text" id="state" name="state" class="mt-1 block w-full px-4 py-2 border rounded-lg focus:ring-green-500 focus:border-green-500">
-          </div>
-
-          <div>
-            <label for="postalCode" class="block text-sm font-medium text-gray-700">Postal Code</label>
-            <input type="text" id="postalCode" name="postalCode" class="mt-1 block w-full px-4 py-2 border rounded-lg focus:ring-green-500 focus:border-green-500">
+          <!-- Order Details Section -->
+          <div class="bg-gray-50 dark:bg-gray-700/50 p-4 rounded-lg">
+            <h3 class="text-lg font-medium text-gray-900 dark:text-white mb-4">Order Details</h3>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+              <div>
+                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Delivery Option</label>
+                <select id="deliveryOption" required
+                  class="w-full px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-600 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-white">
+                  <option value="Standard">Standard Delivery</option>
+                  <option value="Express">Express Delivery</option>
+                </select>
+              </div>
+              <div>
+                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Payment Status</label>
+                <select id="paymentStatus" required
+                  class="w-full px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-600 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-white">
+                  <option value="Pending">Pending</option>
+                  <option value="Paid">Paid</option>
+                  <option value="Failed">Failed</option>
+                </select>
+              </div>
+              <div>
+                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Order Status</label>
+                <select id="orderStatus" required
+                  class="w-full px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-600 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-white">
+                  <option value="Pending">Pending</option>
+                  <option value="Processing">Processing</option>
+                  <option value="Shipped">Shipped</option>
+                  <option value="Delivered">Delivered</option>
+                  <option value="Cancelled">Cancelled</option>
+                </select>
+              </div>
+            </div>
           </div>
         </div>
 
-        <!-- Order Items -->
-        <div class="mt-6">
-          <div class="grid grid-cols-1 gap-6 sm:grid-cols-2">
-            <div>
-              <label for="product" class="block text-sm font-medium text-gray-700">Product</label>
-              <select id="product" name="product" class="mt-1 block w-full px-4 py-2 border rounded-lg focus:ring-green-500 focus:border-green-500">
-                <option value="">Select a product</option>
-                <option value="Product1">Product 1</option>
-                <option value="Product2">Product 2</option>
-                <option value="Product3">Product 3</option>
-              </select>
-            </div>
-
-            <div>
-              <label for="quantity" class="block text-sm font-medium text-gray-700">Quantity</label>
-              <input type="number" id="quantity" name="quantity" class="mt-1 block w-full px-4 py-2 border rounded-lg focus:ring-green-500 focus:border-green-500">
-            </div>
-
-            <div>
-              <label for="color" class="block text-sm font-medium text-gray-700">Color</label>
-              <select id="color" name="color" class="mt-1 block w-full px-4 py-2 border rounded-lg focus:ring-green-500 focus:border-green-500">
-                <option value="">Select a color</option>
-                <option value="Red">Red</option>
-                <option value="Blue">Blue</option>
-                <option value="Green">Green</option>
-                <option value="Black">Black</option>
-              </select>
-            </div>
-
-            <div>
-              <label for="size" class="block text-sm font-medium text-gray-700">Size</label>
-              <select id="size" name="size" class="mt-1 block w-full px-4 py-2 border rounded-lg focus:ring-green-500 focus:border-green-500">
-                <option value="">Select a size</option>
-                <option value="Small">Small</option>
-                <option value="Medium">Medium</option>
-                <option value="Large">Large</option>
-                <option value="Extra Large">Extra Large</option>
-              </select>
-            </div>
+        <!-- Form Actions -->
+        <div class="px-6 py-4 bg-gray-50 dark:bg-gray-700/50 rounded-b-xl border-t border-gray-200 dark:border-gray-700">
+          <div class="flex justify-end space-x-4">
+            <button type="button" onclick="window.location.href='../orders/index.html'"
+              class="px-6 py-2.5 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 focus:ring-4 focus:ring-gray-300 dark:bg-gray-800 dark:text-gray-300 dark:border-gray-600 dark:hover:bg-gray-700">
+              Cancel
+            </button>
+            <button type="submit"
+              class="px-6 py-2.5 text-sm font-medium text-white bg-blue-600 rounded-lg hover:bg-blue-700 focus:ring-4 focus:ring-blue-300 dark:bg-blue-500 dark:hover:bg-blue-600">
+              Create Order
+            </button>
           </div>
-        </div>
-
-        <!-- Order Details -->
-        <div class="mt-6">
-          <div>
-            <label for="deliveryOption" class="block text-sm font-medium text-gray-700">Delivery Option</label>
-            <select id="deliveryOption" name="deliveryOption" class="mt-1 block w-full px-4 py-2 border rounded-lg focus:ring-green-500 focus:border-green-500">
-              <option value="Standard">Standard</option>
-              <option value="Express">Express</option>
-            </select>
-          </div>
-
-          <div class="mt-4">
-            <label for="paymentStatus" class="block text-sm font-medium text-gray-700">Payment Status</label>
-            <select id="paymentStatus" name="paymentStatus" class="mt-1 block w-full px-4 py-2 border rounded-lg focus:ring-green-500 focus:border-green-500">
-              <option value="Pending">Pending</option>
-              <option value="Paid">Paid</option>
-              <option value="Failed">Failed</option>
-            </select>
-          </div>
-
-          <div class="mt-4">
-            <label for="orderStatus" class="block text-sm font-medium text-gray-700">Order Status</label>
-            <select id="orderStatus" name="orderStatus" class="mt-1 block w-full px-4 py-2 border rounded-lg focus:ring-green-500 focus:border-green-500">
-              <option value="Pending">Pending</option>
-              <option value="Shipped">Shipped</option>
-              <option value="Delivered">Delivered</option>
-              <option value="Cancelled">Cancelled</option>
-            </select>
-          </div>
-        </div>
-
-        <!-- Submit Button -->
-        <div class="mt-8 flex justify-end">
-          <button type="reset" class="bg-gray-200 text-gray-700 px-6 py-2 rounded-lg shadow hover:bg-gray-300 transition mr-4">Cancel</button>
-          <button type="submit" class="bg-green-500 text-white px-6 py-2 rounded-lg shadow hover:bg-green-600 transition">Add Order</button>
         </div>
       </form>
     </main>
 
     <!-- Footer -->
-    <footer class="bg-white shadow-md py-4 text-center text-sm text-gray-500 border-t border-gray-200">
+    <footer class="bg-white dark:bg-gray-800 shadow-md py-4 text-center text-sm text-gray-500 dark:text-gray-400 border-t border-gray-200 dark:border-gray-700">
       &copy; 2025 Order Dashboard. All rights reserved.
     </footer>
   </div>
+
+  <!-- Add this script before closing body tag -->
+  <script>
+    let products = [];
+    
+    // Fetch products on page load
+    document.addEventListener('DOMContentLoaded', async () => {
+      try {
+        const token = localStorage.getItem('adminToken');
+        if (!token) {
+          window.location.href = '../index.html';
+          return;
+        }
+
+        // Changed API endpoint to admin products
+        const response = await fetch('/api/admin/products', {
+          headers: {
+            'Authorization': `Bearer ${token}`
+          }
+        });
+
+        const data = await response.json();
+        console.log('Products data:', data); // Debug log
+        
+        if (data.success) {
+          products = data.data;
+          
+          // Populate product dropdown
+          const productSelect = document.getElementById('product');
+          productSelect.innerHTML = `
+            <option value="">Select Product</option>
+            ${products.map(product => `
+              <option value="${product._id}">${product.name} - $${product.price}</option>
+            `).join('')}
+          `;
+        } else {
+          console.error('Failed to fetch products:', data.message);
+        }
+      } catch (error) {
+        console.error('Error fetching products:', error);
+      }
+    });
+
+    // Update size and color options when product changes
+    document.getElementById('product').addEventListener('change', (e) => {
+      const productId = e.target.value;
+      console.log('Selected product ID:', productId); // Debug log
+      const product = products.find(p => p._id === productId);
+      
+      if (product) {
+        console.log('Found product:', product); // Debug log
+        
+        // Update sizes dropdown
+        const sizeSelect = document.getElementById('size');
+        sizeSelect.innerHTML = `
+          <option value="">Select Size</option>
+          ${product.sizes.map(size => `
+            <option value="${size}">${size}</option>
+          `).join('')}
+        `;
+        
+        // Update colors dropdown
+        const colorSelect = document.getElementById('color');
+        colorSelect.innerHTML = `
+          <option value="">Select Color</option>
+          ${product.colors.map(color => `
+            <option value="${color}">${color}</option>
+          `).join('')}
+        `;
+      }
+    });
+
+    function showDialog(success, message) {
+      const dialog = document.getElementById('alertDialog');
+      const title = document.getElementById('dialogTitle');
+      const messageEl = document.getElementById('dialogMessage');
+      const button = document.getElementById('dialogButton');
+      const successIcon = document.getElementById('successIcon');
+      const errorIcon = document.getElementById('errorIcon');
+
+      // Set content based on success/error
+      if (success) {
+        title.textContent = 'Success!';
+        successIcon.classList.remove('hidden');
+        errorIcon.classList.add('hidden');
+        button.classList.add('bg-green-600', 'hover:bg-green-700', 'focus:ring-green-500');
+        button.classList.remove('bg-red-600', 'hover:bg-red-700', 'focus:ring-red-500');
+      } else {
+        title.textContent = 'Error!';
+        successIcon.classList.add('hidden');
+        errorIcon.classList.remove('hidden');
+        button.classList.add('bg-red-600', 'hover:bg-red-700', 'focus:ring-red-500');
+        button.classList.remove('bg-green-600', 'hover:bg-green-700', 'focus:ring-green-500');
+      }
+
+      messageEl.textContent = message;
+      button.textContent = success ? 'Continue' : 'Try Again';
+
+      // Show dialog
+      dialog.classList.remove('hidden');
+
+      // Add click handler to button
+      button.onclick = () => {
+        dialog.classList.add('hidden');
+        if (success) {
+          window.location.href = '../orders/index.html';
+        }
+      };
+    }
+
+    // Update form submission handler
+    document.querySelector('form').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      
+      try {
+        const token = localStorage.getItem('adminToken');
+        const formData = {
+          productId: document.getElementById('product').value,
+          quantity: parseInt(document.getElementById('quantity').value),
+          size: document.getElementById('size').value,
+          color: document.getElementById('color').value,
+          delivery_address: [{
+            firstName: document.getElementById('firstName').value,
+            lastName: document.getElementById('lastName').value,
+            phoneNumber: document.getElementById('phoneNumber').value,
+            address: document.getElementById('address').value,
+            city: document.getElementById('city').value,
+            country: document.getElementById('country').value,
+            state: document.getElementById('state').value,
+            postalCode: document.getElementById('postalCode').value
+          }],
+          delivery_option: document.getElementById('deliveryOption').value,
+          payment_status: document.getElementById('paymentStatus').value.toLowerCase(),
+          order_status: document.getElementById('orderStatus').value.toLowerCase()
+        };
+
+        // Validate required fields
+        if (!formData.productId) {
+          throw new Error('Please select a product');
+        }
+        if (!formData.quantity || formData.quantity < 1) {
+          throw new Error('Please enter a valid quantity');
+        }
+        if (!formData.delivery_address[0].firstName || !formData.delivery_address[0].lastName) {
+          throw new Error('Please enter customer name');
+        }
+        if (!formData.delivery_address[0].phoneNumber) {
+          throw new Error('Please enter phone number');
+        }
+        if (!formData.delivery_address[0].address || !formData.delivery_address[0].city) {
+          throw new Error('Please enter complete address');
+        }
+
+        console.log('Submitting order:', formData);
+
+        const response = await fetch('/api/admin/orders/add', {
+          method: 'POST',
+          headers: {
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify(formData)
+        });
+
+        const data = await response.json();
+        console.log('Response:', data);
+
+        if (data.success) {
+          showDialog(true, 'Order has been created successfully!');
+        } else {
+          showDialog(false, data.message || 'Failed to create order');
+        }
+      } catch (error) {
+        console.error('Error adding order:', error);
+        showDialog(false, error.message);
+      }
+    });
+
+    // Theme toggle functionality
+    const themeToggle = document.getElementById('themeToggle');
+    
+    themeToggle.addEventListener('click', () => {
+      if (document.documentElement.classList.contains('dark')) {
+        document.documentElement.classList.remove('dark');
+        localStorage.theme = 'light';
+      } else {
+        document.documentElement.classList.add('dark');
+        localStorage.theme = 'dark';
+      }
+    });
+  </script>
 </body>
 </html>

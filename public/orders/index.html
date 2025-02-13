@@ -5,35 +5,75 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Orders Page</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+      tailwind.config = {
+        darkMode: 'class',
+        theme: {
+          extend: {},
+        },
+      }
+    </script>
+    <script src="/js/theme.js"></script>
     <link
       href="https://cdn.jsdelivr.net/npm/remixicon/fonts/remixicon.css"
       rel="stylesheet"
     />
   </head>
-  <body class="bg-gray-50 min-h-screen">
+  <body class="bg-gray-50 dark:bg-gray-900 min-h-screen transition-colors duration-200">
     <div class="flex flex-col min-h-screen">
-      <header class="bg-white shadow-md py-4 px-6 border-b border-gray-200">
-        <h1 class="text-2xl font-bold text-gray-800 flex items-center">
+      <header class="bg-white dark:bg-gray-800 shadow-md py-4 px-6 border-b border-gray-200 dark:border-gray-700">
+        <h1 class="text-2xl font-bold text-gray-800 dark:text-white flex items-center">
           <i class="ri-file-list-3-line text-blue-500 text-3xl mr-2"></i>
           Orders
         </h1>
       </header>
 
       <main class="flex-1 p-10">
-        <h2 class="text-xl font-semibold text-gray-800 mb-6">Recent Orders</h2>
+        <div class="flex justify-between items-center mb-6">
+          <div class="flex items-center space-x-4">
+            <h2 class="text-xl font-semibold text-gray-800 dark:text-white">All Orders</h2>
+            <div class="relative">
+              <input 
+                type="text" 
+                id="searchOrder" 
+                placeholder="Search orders..." 
+                class="pl-10 pr-4 py-2 border rounded-lg focus:ring-blue-500 focus:border-blue-500 w-64
+                       dark:bg-gray-700 dark:border-gray-600 dark:text-white dark:placeholder-gray-400"
+              >
+              <i class="ri-search-line absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
+            </div>
+            <select 
+              id="statusFilter" 
+              class="px-4 py-2 border rounded-lg focus:ring-blue-500 focus:border-blue-500
+                     dark:bg-gray-700 dark:border-gray-600 dark:text-white"
+            >
+              <option value="all">All Status</option>
+              <option value="success">Completed</option>
+              <option value="pending">Pending</option>
+              <option value="cancelled">Cancelled</option>
+            </select>
+          </div>
+          <div class="bg-white dark:bg-gray-800 px-4 py-2 rounded-lg shadow">
+            <span class="text-gray-600 dark:text-gray-400">Total Orders:</span>
+            <span class="ml-2 text-blue-600 dark:text-blue-400 font-semibold" id="total-orders-count">0</span>
+          </div>
+        </div>
+
         <div class="overflow-x-auto">
-          <table class="min-w-full bg-white shadow-lg rounded-xl">
-            <thead class="bg-blue-100">
+          <table class="min-w-full bg-white dark:bg-gray-800 shadow-lg rounded-xl">
+            <thead class="bg-blue-100 dark:bg-gray-700">
               <tr>
-                <th class="py-3 px-4 text-left text-sm font-semibold text-gray-700">Order ID</th>
-                <th class="py-3 px-4 text-left text-sm font-semibold text-gray-700">Customer</th>
-                <th class="py-3 px-4 text-left text-sm font-semibold text-gray-700">Date</th>
-                <th class="py-3 px-4 text-left text-sm font-semibold text-gray-700">Status</th>
-                <th class="py-3 px-4 text-left text-sm font-semibold text-gray-700">Total</th>
-                <th class="py-3 px-4 text-center text-sm font-semibold text-gray-700">Actions</th>
+                <th class="py-3 px-4 text-left text-sm font-semibold text-gray-700 dark:text-gray-300">Order ID</th>
+                <th class="py-3 px-4 text-left text-sm font-semibold text-gray-700 dark:text-gray-300">Customer</th>
+                <th class="py-3 px-4 text-left text-sm font-semibold text-gray-700 dark:text-gray-300">Order Date</th>
+                <th class="py-3 px-4 text-left text-sm font-semibold text-gray-700 dark:text-gray-300">Status</th>
+                <th class="py-3 px-4 text-left text-sm font-semibold text-gray-700 dark:text-gray-300">Total</th>
+                <th class="py-3 px-4 text-center text-sm font-semibold text-gray-700 dark:text-gray-300">Actions</th>
               </tr>
             </thead>
-            <tbody id="orders-table-body"></tbody>
+            <tbody id="orders-table-body" class="divide-y divide-gray-200 dark:divide-gray-700">
+              <!-- Orders will be populated here -->
+            </tbody>
           </table>
         </div>
         <div class="mt-8">
@@ -45,128 +85,433 @@
         </div>
       </main>
 
-      <footer class="bg-white shadow-md py-4 text-center text-sm text-gray-500 border-t border-gray-200">
+      <footer class="bg-white dark:bg-gray-800 shadow-md py-4 text-center text-sm text-gray-500 dark:text-gray-400 border-t border-gray-200 dark:border-gray-700">
         &copy; 2025 Orders Dashboard. All rights reserved.
       </footer>
     </div>
 
-    <!-- Modal Structure -->
+    <!-- Modal -->
     <div id="orderModal" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-      <div class="bg-white p-6 rounded-lg shadow-lg w-96">
-        <h2 class="text-xl font-semibold mb-4">Order Details</h2>
-        <div id="orderDetails" class="text-gray-700"></div>
-        <button id="closeModal" class="mt-4 bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">Close</button>
+      <div class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-lg w-96 relative">
+        <button id="closeModal" class="absolute -top-3 -right-3 bg-white dark:bg-gray-700 text-gray-500 dark:text-gray-400 hover:text-red-500 dark:hover:text-red-400 rounded-full p-2 shadow-lg transition-all duration-200 focus:outline-none hover:scale-110 hover:rotate-90">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+          </svg>
+        </button>
+
+        <h2 class="text-xl font-semibold text-gray-800 dark:text-white mb-4">Order Details</h2>
+        <div id="orderDetails" class="text-gray-700 dark:text-gray-300"></div>
       </div>
     </div>
 
     <script>
+      // Define showOrderDetails globally
+      function showOrderDetails(order) {
+        const modal = document.getElementById('orderModal');
+        const orderDetails = document.getElementById('orderDetails');
+        
+        const totalAmount = order.items.reduce(
+          (sum, item) => sum + parseFloat(item.price) * item.quantity,
+          0
+        );
+        
+        orderDetails.innerHTML = `
+          <div class="grid grid-cols-2 gap-4 mb-4">
+            <div>
+              <h3 class="font-semibold text-sm mb-2">Order Information</h3>
+              <p class="text-xs mb-1.5">
+                <span class="text-gray-500 dark:text-gray-400">Order ID:</span> 
+                <span 
+                  class="cursor-pointer hover:text-blue-600 dark:hover:text-blue-400" 
+                  onclick="copyToClipboard('${order._id}')"
+                  title="Click to copy"
+                >
+                  #${order._id.substring(0, 6)}...
+                </span>
+              </p>
+              <p class="text-xs mb-1.5">
+                <span class="text-gray-500 dark:text-gray-400">Date:</span> 
+                <span 
+                  class="cursor-pointer hover:text-blue-600 dark:hover:text-blue-400" 
+                  onclick="copyToClipboard('${new Date(order.createdAt).toLocaleString()}')"
+                  title="Click to copy"
+                >
+                  ${new Date(order.createdAt).toLocaleString()}
+                </span>
+              </p>
+              <div class="text-xs mb-1.5 flex items-center gap-2">
+                <span class="text-gray-500 dark:text-gray-400">Status:</span> 
+                <select 
+                  id="orderStatusSelect" 
+                  class="text-xs px-2 py-1 rounded border border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-700 cursor-pointer"
+                  onchange="updateOrderStatus('${order._id}', this.value)"
+                  data-order-id="${order._id}"
+                >
+                  <option value="pending" ${order.order_status === 'pending' ? 'selected' : ''}>Pending</option>
+                  <option value="success" ${order.order_status === 'success' ? 'selected' : ''}>Completed</option>
+                  <option value="cancelled" ${order.order_status === 'cancelled' ? 'selected' : ''}>Cancelled</option>
+                </select>
+                <span id="statusUpdateSpinner" class="hidden">
+                  <svg class="animate-spin h-4 w-4 text-blue-500" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                    <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                  </svg>
+                </span>
+              </div>
+            </div>
+            <div>
+              <h3 class="font-semibold text-sm mb-2">Customer Information</h3>
+              <p class="text-xs mb-1.5">
+                <span class="text-gray-500 dark:text-gray-400">Name:</span> 
+                <span 
+                  class="cursor-pointer hover:text-blue-600 dark:hover:text-blue-400" 
+                  onclick="copyToClipboard('${order.delivery_address[0]?.firstName} ${order.delivery_address[0]?.lastName}')"
+                  title="Click to copy"
+                >
+                  ${order.delivery_address[0]?.firstName} ${order.delivery_address[0]?.lastName}
+                </span>
+              </p>
+              <p class="text-xs mb-1.5">
+                <span class="text-gray-500 dark:text-gray-400">Phone:</span> 
+                <span 
+                  class="cursor-pointer hover:text-blue-600 dark:hover:text-blue-400" 
+                  onclick="copyToClipboard('${order.delivery_address[0]?.phoneNumber || 'N/A'}')"
+                  title="Click to copy"
+                >
+                  ${order.delivery_address[0]?.phoneNumber || 'N/A'}
+                </span>
+              </p>
+              <p class="text-xs mb-1.5">
+                <span class="text-gray-500 dark:text-gray-400">Address:</span> 
+                <span 
+                  class="cursor-pointer hover:text-blue-600 dark:hover:text-blue-400" 
+                  onclick="copyToClipboard('${order.delivery_address[0]?.address}, ${order.delivery_address[0]?.city}')"
+                  title="Click to copy"
+                >
+                  ${order.delivery_address[0]?.address}, ${order.delivery_address[0]?.city}
+                </span>
+              </p>
+            </div>
+          </div>
+          
+          <div class="mt-4">
+            <h3 class="font-semibold text-sm mb-2">Order Items</h3>
+            <div class="bg-gray-50 dark:bg-gray-700 rounded-lg p-3">
+              ${order.items.map(item => `
+                <div class="flex justify-between items-center py-1.5 border-b dark:border-gray-600 last:border-0">
+                  <div class="cursor-pointer hover:text-blue-600 dark:hover:text-blue-400" 
+                       onclick="copyToClipboard('${item.title} - Quantity: ${item.quantity} - Price: $${(item.price * item.quantity).toFixed(2)}')"
+                       title="Click to copy item details">
+                    <p class="text-xs font-medium">${item.title}</p>
+                    <p class="text-xs text-gray-500 dark:text-gray-400">Quantity: ${item.quantity}</p>
+                  </div>
+                  <p class="text-xs font-medium">$${(item.price * item.quantity).toFixed(2)}</p>
+                </div>
+              `).join('')}
+              <div class="flex justify-between items-center mt-3 pt-2 border-t dark:border-gray-600">
+                <p class="text-xs font-semibold">Total Amount:</p>
+                <p class="text-xs font-semibold cursor-pointer hover:text-blue-600 dark:hover:text-blue-400"
+                   onclick="copyToClipboard('$${totalAmount.toFixed(2)}')"
+                   title="Click to copy total amount">
+                  $${totalAmount.toFixed(2)}
+                </p>
+              </div>
+            </div>
+          </div>
+        `;
+        
+        modal.classList.remove('hidden');
+      }
+
+      // Update the updateOrderStatus function
+      async function updateOrderStatus(orderId, newStatus) {
+        const spinner = document.getElementById('statusUpdateSpinner');
+        const statusSelect = document.getElementById('orderStatusSelect');
+        const originalValue = statusSelect.value;
+        
+        try {
+          spinner.classList.remove('hidden');
+          statusSelect.disabled = true;
+          
+          const token = localStorage.getItem('adminToken');
+          const response = await fetch(`/api/admin/orders/${orderId}/status`, {
+            method: 'PATCH',
+            headers: {
+              'Authorization': `Bearer ${token}`,
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ status: newStatus })
+          });
+
+          const data = await response.json();
+
+          if (data.success) {
+            // Show success feedback
+            const tooltip = document.createElement('div');
+            tooltip.className = 'fixed bg-green-600 text-white px-2 py-1 rounded text-xs z-50';
+            tooltip.style.top = `${event.pageY - 30}px`;
+            tooltip.style.left = `${event.pageX}px`;
+            tooltip.textContent = 'Status updated successfully!';
+            document.body.appendChild(tooltip);
+            
+            setTimeout(() => tooltip.remove(), 2000);
+
+            // Get status styling
+            const statusClass = 
+              newStatus === 'success' ? 'bg-green-100 text-green-600 dark:bg-green-900 dark:text-green-400' :
+              newStatus === 'cancelled' ? 'bg-red-100 text-red-600 dark:bg-red-900 dark:text-red-400' :
+              'bg-yellow-100 text-yellow-600 dark:bg-yellow-900 dark:text-yellow-400';
+
+            const dotClass = 
+              newStatus === 'success' ? 'bg-green-600 dark:bg-green-400' :
+              newStatus === 'cancelled' ? 'bg-red-600 dark:bg-red-400' :
+              'bg-yellow-600 dark:bg-yellow-400';
+
+            const statusText = 
+              newStatus === 'success' ? 'Completed' :
+              newStatus === 'cancelled' ? 'Cancelled' : 
+              'Pending';
+
+            // Update the order in allOrders array
+            const orderIndex = allOrders.findIndex(order => order._id === orderId);
+            if (orderIndex !== -1) {
+              allOrders[orderIndex].order_status = newStatus;
+            }
+
+            // Update status in table
+            const orderRow = document.querySelector(`tr[data-order-id="${orderId}"]`);
+            if (orderRow) {
+              const statusCell = orderRow.querySelector('.status-cell');
+              if (statusCell) {
+                statusCell.innerHTML = `
+                  <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium ${statusClass}">
+                    <span class="w-2 h-2 rounded-full ${dotClass} mr-1.5"></span>
+                    ${statusText}
+                  </span>
+                `;
+              }
+            }
+
+            // Re-filter orders if there's an active filter
+            const currentFilter = document.getElementById('statusFilter').value;
+            const searchTerm = document.getElementById('searchOrder').value;
+            if (currentFilter !== 'all' || searchTerm) {
+              filterOrders();
+            }
+
+            // Remove new badge when status is updated
+            const newBadge = orderRow.querySelector('.bg-blue-100');
+            if (newBadge) {
+              newBadge.remove();
+            }
+
+          } else {
+            throw new Error(data.message || 'Failed to update status');
+          }
+        } catch (error) {
+          console.error('Error updating order status:', error);
+          // Revert the select value
+          statusSelect.value = originalValue;
+          
+          // Show error feedback
+          const tooltip = document.createElement('div');
+          tooltip.className = 'fixed bg-red-600 text-white px-2 py-1 rounded text-xs z-50';
+          tooltip.style.top = `${event.pageY - 30}px`;
+          tooltip.style.left = `${event.pageX}px`;
+          tooltip.textContent = 'Failed to update status!';
+          document.body.appendChild(tooltip);
+          
+          setTimeout(() => tooltip.remove(), 2000);
+        } finally {
+          spinner.classList.add('hidden');
+          statusSelect.disabled = false;
+        }
+      }
+
+      // Add this function at the top of the script section
+      function copyToClipboard(text) {
+        navigator.clipboard.writeText(text).then(() => {
+          // Show a tooltip or some feedback
+          const tooltip = document.createElement('div');
+          tooltip.className = 'fixed bg-gray-800 text-white px-2 py-1 rounded text-sm z-50';
+          tooltip.style.top = `${event.pageY - 30}px`;
+          tooltip.style.left = `${event.pageX}px`;
+          tooltip.textContent = 'Copied!';
+          document.body.appendChild(tooltip);
+          
+          setTimeout(() => tooltip.remove(), 1000);
+        });
+      }
+
       document.addEventListener('DOMContentLoaded', () => {
         const ordersTableBody = document.querySelector('#orders-table-body');
         const modal = document.querySelector('#orderModal');
         const orderDetails = document.querySelector('#orderDetails');
-        const closeModal = document.querySelector('#closeModal');
+        const closeModalBtn = document.querySelector('#closeModal');
+        const searchInput = document.getElementById('searchOrder');
+        const statusFilter = document.getElementById('statusFilter');
+        
+        let allOrders = []; // Store all orders
+        
+        // Add event listeners for search and filter
+        searchInput.addEventListener('input', () => {
+          filterOrders();
+        });
 
+        statusFilter.addEventListener('change', () => {
+          filterOrders();
+        });
+
+        // Filter orders function
+        function filterOrders() {
+          const searchTerm = searchInput.value.toLowerCase();
+          const statusValue = statusFilter.value;
+          
+          const filteredOrders = allOrders.filter(order => {
+            // Search in order ID and customer name
+            const orderIdMatch = order._id.toLowerCase().includes(searchTerm);
+            const customerNameMatch = (
+              (order.delivery_address[0]?.firstName?.toLowerCase() || '').includes(searchTerm) ||
+              (order.delivery_address[0]?.lastName?.toLowerCase() || '').includes(searchTerm)
+            );
+
+            // Status filter
+            const statusMatch = statusValue === 'all' || order.order_status === statusValue;
+
+            return (orderIdMatch || customerNameMatch) && statusMatch;
+          });
+
+          // Update total count
+          document.getElementById('total-orders-count').textContent = filteredOrders.length;
+          
+          // Render filtered orders
+          renderFilteredOrders(filteredOrders);
+        }
+
+        // Fetch orders function
         async function fetchOrders() {
-  try {
-    const token = localStorage.getItem('adminToken');
-    if (!token) {
-      window.location.href = '../index.html'; // Redirect to login if no token is found
-      return;
-    }
+          try {
+            const token = localStorage.getItem('adminToken');
+            if (!token) {
+              window.location.href = '../index.html';
+              return;
+            }
 
-    const response = await fetch('/api/admin/orders', {
-      method: 'GET',
-      headers: {
-        'Authorization': `Bearer ${token}`, // Include the token in the Authorization header
-      },
-    });
+            const response = await fetch('/api/admin/orders', {
+              method: 'GET',
+              headers: {
+                'Authorization': `Bearer ${token}`,
+              },
+            });
 
-    if (!response.ok) {
-      throw new Error('Failed to fetch orders');
-    }
-
-    const data = await response.json();
-    if (data.success && data.data) {
-      renderOrders(data.data); // Call the renderOrders function to display the orders
-    }
-  } catch (error) {
-    console.error('Error:', error);
-  }
-}
-
-
-        function renderOrders(orders) {
-          ordersTableBody.innerHTML = '';
-          if (orders.length === 0) {
-            ordersTableBody.innerHTML = `
-              <tr>
-                <td colspan="6" class="py-4 px-4 text-center text-gray-500">No orders available</td>
-              </tr>
-            `;
-            return;
+            const data = await response.json();
+            
+            if (data.success && data.data) {
+              // Store orders and sort by date
+              allOrders = [...data.data].sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+              
+              // Initial filter and render
+              filterOrders();
+            }
+          } catch (error) {
+            console.error('Error fetching orders:', error);
           }
+        }
 
-          orders.forEach((order) => {
+        // Render filtered orders function
+        function renderFilteredOrders(orders) {
+          const ordersTableBody = document.getElementById('orders-table-body');
+          
+          ordersTableBody.innerHTML = orders.map(order => {
             const totalAmount = order.items.reduce(
               (sum, item) => sum + parseFloat(item.price) * item.quantity,
               0
             );
-            const row = `
-              <tr class="border-b hover:bg-gray-50">
-                <td class="py-4 px-4">#${order._id}</td>
-                <td class="py-4 px-4">${order.delivery_address[0]?.firstName} ${order.delivery_address[0]?.lastName}</td>
-                <td class="py-4 px-4">${new Date(order.createdAt).toLocaleDateString()}</td>
-                <td class="py-4 px-4">
-                  <span class="text-sm text-yellow-600 bg-yellow-100 px-2 py-1 rounded-lg">${order.order_status}</span>
-                </td>
-                <td class="py-4 px-4">$${totalAmount.toFixed(2)}</td>
-                <td class="py-4 px-4 text-center">
-                  <button class="text-blue-600 hover:underline mr-2 view-order" data-order='${JSON.stringify(order)}'>View</button>
-                  <button class="text-red-600 hover:underline">Cancel</button>
-                </td>
-              </tr>`;
-            ordersTableBody.insertAdjacentHTML('beforeend', row);
-          });
+            
+            const statusClass = order.order_status === 'success' 
+              ? 'bg-green-100 text-green-600 dark:bg-green-900 dark:text-green-400' 
+              : order.order_status === 'cancelled'
+              ? 'bg-red-100 text-red-600 dark:bg-red-900 dark:text-red-400'
+              : 'bg-yellow-100 text-yellow-600 dark:bg-yellow-900 dark:text-yellow-400';
 
-          document.querySelectorAll('.view-order').forEach((button) => {
-            button.addEventListener('click', (e) => {
-              const order = JSON.parse(e.target.dataset.order);
-              showOrderDetails(order);
+            const statusText = order.order_status === 'success' 
+              ? 'Completed'
+              : order.order_status === 'cancelled'
+              ? 'Cancelled'
+              : 'Pending';
+            
+            return `
+              <tr class="border-b hover:bg-gray-50 dark:hover:bg-gray-700 dark:border-gray-700" data-order-id="${order._id}">
+                <td class="py-4 px-4 text-gray-900 dark:text-gray-300">
+                  <div class="flex items-center">
+                    <span 
+                      class="cursor-pointer hover:text-blue-600 dark:hover:text-blue-400" 
+                      onclick="copyToClipboard('${order._id}')"
+                      title="Click to copy full ID"
+                    >
+                      #${order._id.substring(0, 6)}...
+                    </span>
+                    ${order.isNew ? `
+                      <span class="ml-2 bg-blue-100 text-blue-600 dark:bg-blue-900 dark:text-blue-400 text-xs px-2 py-0.5 rounded-full">
+                        New
+                      </span>
+                    ` : ''}
+                  </div>
+                </td>
+                <td class="py-4 px-4 text-gray-900 dark:text-gray-300">${order.delivery_address[0]?.firstName} ${order.delivery_address[0]?.lastName}</td>
+                <td class="py-4 px-4 text-gray-900 dark:text-gray-300">
+                  ${new Date(order.createdAt).toLocaleString('en-US', {
+                    year: 'numeric',
+                    month: 'short',
+                    day: 'numeric',
+                    hour: '2-digit',
+                    minute: '2-digit'
+                  })}
+                </td>
+                <td class="py-4 px-4 status-cell">
+                  <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium ${statusClass}">
+                    <span class="w-2 h-2 rounded-full ${
+                      order.order_status === 'success' ? 'bg-green-600 dark:bg-green-400' :
+                      order.order_status === 'cancelled' ? 'bg-red-600 dark:bg-red-400' :
+                      'bg-yellow-600 dark:bg-yellow-400'
+                    } mr-1.5"></span>
+                    ${statusText}
+                  </span>
+                </td>
+                <td class="py-4 px-4 text-gray-900 dark:text-gray-300">$${totalAmount.toFixed(2)}</td>
+                <td class="py-4 px-4 text-center">
+                  <button 
+                    data-order='${JSON.stringify(order)}'
+                    class="view-details-btn text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300">
+                    View Details
+                  </button>
+                </td>
+              </tr>
+            `;
+          }).join('');
+
+          // Add click event listeners to view details buttons
+          document.querySelectorAll('.view-details-btn').forEach(button => {
+            button.addEventListener('click', function() {
+              const orderData = JSON.parse(this.dataset.order);
+              showOrderDetails(orderData);
             });
           });
         }
 
-        function showOrderDetails(order) {
-          const itemsList = order.items
-            .map(
-              (item) => `
-              <li>
-                <strong>${item.title}</strong> - $${item.price} x ${item.quantity}
-              </li>
-            `
-            )
-            .join('');
-
-          orderDetails.innerHTML = `
-            <p><strong>Order ID:</strong> ${order._id}</p>
-            <p><strong>Status:</strong> ${order.order_status}</p>
-            <p><strong>Total:</strong> $${order.items.reduce(
-              (sum, item) => sum + parseFloat(item.price) * item.quantity,
-              0
-            ).toFixed(2)}</p>
-            <p><strong>Delivery Address:</strong> ${order.delivery_address[0]?.address}, ${order.delivery_address[0]?.city}</p>
-            <p><strong>Phone Number:</strong> ${order.delivery_address[0]?.phoneNumber}</p>
-            <p><strong>Payment Status:</strong> ${order.payment_status}</p>
-            <p><strong>Delivery Option:</strong> ${order.delivery_option}</p>
-            <p><strong>Items:</strong></p>
-            <ul>${itemsList}</ul>
-          `;
-
-          modal.classList.remove('hidden');
-        }
-
-        closeModal.addEventListener('click', () => {
+        const closeModal = () => {
           modal.classList.add('hidden');
+          // Refresh the orders list
+          fetchOrders();
+        };
+
+        closeModalBtn.addEventListener('click', closeModal);
+        
+        // Close modal when clicking outside
+        modal.addEventListener('click', (e) => {
+          if (e.target === modal) {
+            closeModal();
+          }
         });
 
         fetchOrders();

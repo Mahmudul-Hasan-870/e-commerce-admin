@@ -159,58 +159,98 @@ exports.logout = async (req, res) => {
 
 // Backend
 
-// Fetch all users
+// Fetch all users with search and filter
 exports.getUsers = async (req, res) => {
     try {
-      const users = await User.find();
-      res.status(200).json({ status: 'success', data: users });
-    } catch (err) {
-      res.status(500).json({ status: 'error', message: 'Error fetching users' });
+        const users = await User.find({}, '-password');
+        
+        res.json({
+            success: true,
+            message: 'Users fetched successfully',
+            data: users
+        });
+    } catch (error) {
+        res.status(500).json({
+            success: false,
+            message: 'Error fetching users',
+            error: error.message
+        });
     }
-  };
-  
-  // Update user by ID
-  exports.updateUser = async (req, res) => {
+};
+
+// Update user by ID
+exports.updateUser = async (req, res) => {
     try {
-      const { name, email, password, isLogged } = req.body;
-      const userId = req.params.id;
-  
-      let updatedFields = { name, email, isLogged };
-  
-      // Hash password if provided
-      if (password) {
-        const salt = await bcrypt.genSalt(10);
-        updatedFields.password = await bcrypt.hash(password, salt);
-      }
-  
-      const updatedUser = await User.findByIdAndUpdate(userId, updatedFields, { new: true });
-  
-      if (!updatedUser) {
-        return res.status(404).json({ status: 'error', message: 'User not found' });
-      }
-  
-      res.status(200).json({ status: 'success', data: updatedUser });
-    } catch (err) {
-      res.status(500).json({ status: 'error', message: 'Error updating user' });
+        const { name, email, password, isLogged } = req.body;
+        const userId = req.params.id;
+
+        // Validate input
+        if (!name || !email) {
+            return res.status(400).json({
+                status: 'error',
+                message: 'Name and email are required'
+            });
+        }
+
+        // Check if user exists
+        const existingUser = await User.findById(userId);
+        if (!existingUser) {
+            return res.status(404).json({
+                status: 'error',
+                message: 'User not found'
+            });
+        }
+
+        // Create update object
+        let updateData = {
+            name,
+            email,
+            isLogged: isLogged === 'true' || isLogged === true
+        };
+
+        // If password is provided, hash it
+        if (password && password.trim() !== '') {
+            const salt = await bcrypt.genSalt(10);
+            updateData.password = await bcrypt.hash(password, salt);
+        }
+
+        // Update user
+        const updatedUser = await User.findByIdAndUpdate(
+            userId,
+            updateData,
+            { new: true, runValidators: true }
+        ).select('-password');
+
+        res.json({
+            status: 'success',
+            message: 'User updated successfully',
+            data: updatedUser
+        });
+
+    } catch (error) {
+        res.status(500).json({
+            status: 'error',
+            message: error.message || 'Error updating user'
+        });
     }
-  };
-  
-  // Delete user by ID
-  exports.deleteUser = async (req, res) => {
+};
+
+// Delete user by ID
+exports.deleteUser = async (req, res) => {
     try {
-      const userId = req.params.id;
-      const deletedUser = await User.findByIdAndDelete(userId);
-  
-      if (!deletedUser) {
-        return res.status(404).json({ status: 'error', message: 'User not found' });
-      }
-  
-      res.status(200).json({ status: 'success', message: 'User deleted successfully' });
+        const userId = req.params.id;
+        const deletedUser = await User.findByIdAndDelete(userId);
+
+        if (!deletedUser) {
+            return res.status(404).json({ status: 'error', message: 'User not found' });
+        }
+
+        res.status(200).json({ status: 'success', message: 'User deleted successfully' });
     } catch (err) {
-      res.status(500).json({ status: 'error', message: 'Error deleting user' });
+        res.status(500).json({ status: 'error', message: 'Error deleting user' });
     }
-  };
-  
+};
+
 // Fetch total users
 exports.getTotalUsers = async (req, res) => {
     try {
@@ -224,15 +264,15 @@ exports.getTotalUsers = async (req, res) => {
 // Controller to fetch active users (users with isLogged: true)
 exports.getActiveUsers = async (req, res) => {
     try {
-      // Count users with isLogged: true
-      const activeUsers = await User.countDocuments({ isLogged: true });
-  
-      // Return the count of active users
-      res.json({ status: 'success', data: activeUsers });
+        // Count users with isLogged: true
+        const activeUsers = await User.countDocuments({ isLogged: true });
+
+        // Return the count of active users
+        res.json({ status: 'success', data: activeUsers });
     } catch (err) {
-      console.error('Error fetching active users:', err);
-      res.status(500).json({ status: 'error', message: 'Server Error' });
+        console.error('Error fetching active users:', err);
+        res.status(500).json({ status: 'error', message: 'Server Error' });
     }
-  };
+};
 
 

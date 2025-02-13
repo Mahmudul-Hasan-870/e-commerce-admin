@@ -5,101 +5,136 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Ecommerce - Admin</title>
   <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {},
+      },
+    }
+  </script>
+  <script src="/js/theme.js"></script>
   <link href="https://cdn.jsdelivr.net/npm/remixicon/fonts/remixicon.css" rel="stylesheet">
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
-<body class="bg-gray-50">
+<body class="bg-gray-50 dark:bg-gray-900 transition-colors duration-200">
   <div class="flex min-h-screen">
     <!-- Sidebar -->
-    <div class="w-64 bg-white shadow-lg">
-      <div class="p-6 border-b border-gray-200">
-        <h1 class="text-2xl font-bold text-gray-800 flex items-center">
+    <div class="w-64 bg-white dark:bg-gray-800 shadow-lg">
+      <div class="p-6 border-b border-gray-200 dark:border-gray-700">
+        <h1 class="text-2xl font-bold text-gray-800 dark:text-white flex items-center">
           <i class="ri-dashboard-line text-blue-500 text-3xl mr-2"></i>
           Menu
         </h1>
       </div>
       <nav class="mt-4">
-        <a href="dashboard.html" class="flex items-center py-3 px-4 rounded-lg hover:bg-blue-100 transition duration-200 text-gray-700">
+        <a href="dashboard.html" class="flex items-center py-3 px-4 rounded-lg hover:bg-blue-100 dark:hover:bg-gray-700 transition duration-200 text-gray-700 dark:text-gray-300">
           <i class="ri-home-line text-lg mr-3 text-blue-500"></i> Home
         </a>
-        <a href="../Products/index.html" class="flex items-center py-3 px-4 rounded-lg hover:bg-blue-100 transition duration-200 text-gray-700">
+        <a href="../Products/index.html" class="flex items-center py-3 px-4 rounded-lg hover:bg-blue-100 dark:hover:bg-gray-700 transition duration-200 text-gray-700 dark:text-gray-300">
           <i class="ri-shopping-cart-line text-lg mr-3 text-green-500"></i> Products
         </a>
-        <a href="../orders/index.html" class="flex items-center py-3 px-4 rounded-lg hover:bg-blue-100 transition duration-200 text-gray-700">
+        <a href="../orders/index.html" class="flex items-center py-3 px-4 rounded-lg hover:bg-blue-100 dark:hover:bg-gray-700 transition duration-200 text-gray-700 dark:text-gray-300">
           <i class="ri-file-list-3-line text-lg mr-3 text-purple-500"></i> Orders
         </a>
-        <a href="../getUsers/index.html" class="flex items-center py-3 px-4 rounded-lg hover:bg-blue-100 transition duration-200 text-gray-700">
-          <i class="ri-user-line text-lg mr-3 text-orange-500"></i> Users
+        <a href="../getUsers/index.html" class="flex items-center py-3 px-4 rounded-lg hover:bg-blue-100 dark:hover:bg-gray-700 transition duration-200 text-gray-700 dark:text-gray-300">
+          <i class="ri-user-line text-lg mr-3 text-orange-500"></i> Customers
+        </a>
+        <a href="../settings/index.html" class="flex items-center py-3 px-4 rounded-lg hover:bg-blue-100 dark:hover:bg-gray-700 transition duration-200 text-gray-700 dark:text-gray-300">
+          <i class="ri-settings-3-line text-lg mr-3 text-gray-500"></i> Settings
         </a>
       </nav>
     </div>
 
     <!-- Main Content -->
     <div class="flex-1 flex flex-col">
+      <!-- Order Details Modal -->
+      <div id="orderModal" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+        <div class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-lg w-96 relative">
+          <button id="closeModal" class="absolute -top-3 -right-3 bg-white dark:bg-gray-700 text-gray-500 dark:text-gray-400 hover:text-red-500 dark:hover:text-red-400 rounded-full p-2 shadow-lg transition-all duration-200 focus:outline-none hover:scale-110 hover:rotate-90">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+            </svg>
+          </button>
+
+          <h2 class="text-xl font-semibold text-gray-800 dark:text-white mb-4">Order Details</h2>
+          <div id="orderDetails" class="text-gray-700 dark:text-gray-300"></div>
+        </div>
+      </div>
+
       <!-- Header -->
-      <header class="bg-white shadow-md py-4 px-6 border-b border-gray-200">
-        <h1 class="text-2xl font-bold text-gray-800">Dashboard</h1>
+      <header class="bg-white dark:bg-gray-800 shadow-md py-4 px-6 border-b border-gray-200 dark:border-gray-700">
+        <h1 class="text-2xl font-bold text-gray-800 dark:text-white">Dashboard</h1>
       </header>
 
       <main class="flex-1 p-10">
         <!-- Stats Cards -->
         <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
-          <div class="p-6 bg-white shadow-lg rounded-xl border border-gray-200">
+          <div class="p-6 bg-white dark:bg-gray-800 shadow-lg rounded-xl border border-gray-200 dark:border-gray-700">
             <div class="flex items-center justify-between">
-              <h2 class="text-lg font-semibold text-gray-800">Total Users</h2>
+              <h2 class="text-lg font-semibold text-gray-800 dark:text-white">Total Users</h2>
               <i class="ri-team-line text-3xl text-green-600"></i>
             </div>
-            <p class="mt-4 text-3xl font-bold text-gray-900" id="totalUsers">Loading...</p>
+            <p class="mt-4 text-3xl font-bold text-gray-900 dark:text-white" id="totalUsers">Loading...</p>
           </div>
 
-          <div class="p-6 bg-white shadow-lg rounded-xl border border-gray-200">
+          <div class="p-6 bg-white dark:bg-gray-800 shadow-lg rounded-xl border border-gray-200 dark:border-gray-700">
             <div class="flex items-center justify-between">
-              <h2 class="text-lg font-semibold text-gray-800">Active Users</h2>
+              <h2 class="text-lg font-semibold text-gray-800 dark:text-white">Active Users</h2>
               <i class="ri-team-line text-3xl text-blue-600"></i>
             </div>
-            <p class="mt-4 text-3xl font-bold text-gray-900" id="activeUsers">Loading...</p>
+            <p class="mt-4 text-3xl font-bold text-gray-900 dark:text-white" id="activeUsers">Loading...</p>
           </div>
 
-          <div class="p-6 bg-white shadow-lg rounded-xl border border-gray-200">
+          <div class="p-6 bg-white dark:bg-gray-800 shadow-lg rounded-xl border border-gray-200 dark:border-gray-700">
             <div class="flex items-center justify-between">
-              <h2 class="text-lg font-semibold text-gray-800">Total Revenue</h2>
+              <h2 class="text-lg font-semibold text-gray-800 dark:text-white">Total Revenue</h2>
               <i class="ri-money-dollar-circle-line text-3xl text-yellow-600"></i>
             </div>
-            <p class="mt-4 text-3xl font-bold text-gray-900" id="totalRevenue">Loading...</p>
+            <p class="mt-4 text-3xl font-bold text-gray-900 dark:text-white" id="totalRevenue">Loading...</p>
           </div>          
         </div>
 
         <!-- Charts Section -->
         <div class="mt-8 grid grid-cols-1 xl:grid-cols-2 gap-6">
-
             <!-- Order Status Multi-Line Chart -->
-            <div class="p-6 bg-white shadow-lg rounded-xl border border-gray-200">
-              <h2 class="text-xl font-semibold text-gray-800">Order Status</h2>
+            <div class="p-6 bg-white dark:bg-gray-800 shadow-lg rounded-xl border border-gray-200 dark:border-gray-700">
+              <h2 class="text-xl font-semibold text-gray-800 dark:text-white">Order Status</h2>
               <canvas id="orderStatusChart" class="h-48"></canvas>
             </div>
 
-         <!-- Monthly Sales Chart -->
-          <div class="p-6 bg-white shadow-lg rounded-xl border border-gray-200">
-            <h2 class="text-xl font-semibold text-gray-800">Monthly Sales</h2>
-            <canvas id="salesChart" class="h-48"></canvas>
-          </div>
-
-             <!-- User Growth Chart -->
-             <div class="p-6 bg-white shadow-lg rounded-xl border border-gray-200">
-              <h2 class="text-xl font-semibold text-gray-800">User Growth</h2>
-              <canvas id="growthChart" class="h-48"></canvas>
-            </div>
-
           <!-- Total Orders Chart -->
-          <div class="p-6 bg-white shadow-lg rounded-xl border border-gray-200">
-            <h2 class="text-xl font-semibold text-gray-800">Total Orders</h2>
+          <div class="p-6 bg-white dark:bg-gray-800 shadow-lg rounded-xl border border-gray-200 dark:border-gray-700">
+            <h2 class="text-xl font-semibold text-gray-800 dark:text-white">Total Orders</h2>
             <canvas id="totalOrdersChart" class="h-48"></canvas>
+          </div>
+        </div>
+
+        <!-- Recent Orders Section -->
+        <div class="mt-8">
+          <h2 class="text-xl font-semibold text-gray-800 dark:text-white mb-4">Recent Orders</h2>
+          <div class="overflow-x-auto">
+            <table class="min-w-full bg-white dark:bg-gray-800 shadow-lg rounded-xl">
+              <thead class="bg-blue-100 dark:bg-gray-700">
+                <tr>
+                  <th class="py-3 px-4 text-left text-sm font-semibold text-gray-700 dark:text-gray-300">Order ID</th>
+                  <th class="py-3 px-4 text-left text-sm font-semibold text-gray-700 dark:text-gray-300">Customer</th>
+                  <th class="py-3 px-4 text-left text-sm font-semibold text-gray-700 dark:text-gray-300">Date</th>
+                  <th class="py-3 px-4 text-left text-sm font-semibold text-gray-700 dark:text-gray-300">Status</th>
+                  <th class="py-3 px-4 text-left text-sm font-semibold text-gray-700 dark:text-gray-300">Total</th>
+                  <th class="py-3 px-4 text-center text-sm font-semibold text-gray-700 dark:text-gray-300">Actions</th>
+                </tr>
+              </thead>
+              <tbody id="recent-orders-table">
+                <!-- Orders will be populated here -->
+              </tbody>
+            </table>
           </div>
         </div>
       </main>
 
       <!-- Footer -->
-      <footer class="bg-white shadow-md py-4 text-center text-sm text-gray-500 border-t border-gray-200">
+      <footer class="bg-white dark:bg-gray-800 shadow-md py-4 text-center text-sm text-gray-500 dark:text-gray-400 border-t border-gray-200 dark:border-gray-700">
         &copy; 2025 Dashboard. All rights reserved.
       </footer>
     </div>
@@ -219,25 +254,363 @@
       }
     }
 
+    async function fetchRecentOrders() {
+      try {
+        const token = localStorage.getItem('adminToken');
+        if (!token) {
+          window.location.href = '../index.html';
+          return;
+        }
+
+        const response = await fetch('/api/admin/orders', {
+          method: 'GET',
+          headers: {
+            'Authorization': `Bearer ${token}`,
+          },
+        });
+
+        const data = await response.json();
+        
+        if (data.success && data.data) {
+          // Get last 5 orders and add isNew flag
+          const recentOrders = data.data
+            .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
+            .slice(0, 5)
+            .map(order => ({
+              ...order,
+              isNew: (Date.now() - new Date(order.createdAt).getTime()) < 24 * 60 * 60 * 1000
+            }));
+          
+          const ordersTableBody = document.getElementById('recent-orders-table');
+          
+          ordersTableBody.innerHTML = recentOrders.map(order => {
+            const totalAmount = order.items.reduce(
+              (sum, item) => sum + parseFloat(item.price) * item.quantity,
+              0
+            );
+            
+            const statusClass = order.order_status === 'success' 
+              ? 'bg-green-100 text-green-600 dark:bg-green-900 dark:text-green-400' 
+              : order.order_status === 'cancelled'
+              ? 'bg-red-100 text-red-600 dark:bg-red-900 dark:text-red-400'
+              : 'bg-yellow-100 text-yellow-600 dark:bg-yellow-900 dark:text-yellow-400';
+
+            const statusText = order.order_status === 'success' 
+              ? 'Completed'
+              : order.order_status === 'cancelled'
+              ? 'Cancelled'
+              : 'Pending';
+            
+            return `
+              <tr class="border-b hover:bg-gray-50 dark:hover:bg-gray-700 dark:border-gray-700" data-order-id="${order._id}">
+                <td class="py-4 px-4 text-gray-900 dark:text-gray-300">
+                  <div class="flex items-center">
+                    <span 
+                      class="cursor-pointer hover:text-blue-600 dark:hover:text-blue-400" 
+                      onclick="copyToClipboard('${order._id}')"
+                      title="Click to copy"
+                    >
+                      #${order._id.substring(0, 6)}...
+                    </span>
+                    ${order.isNew ? `
+                      <span class="ml-2 bg-blue-100 text-blue-600 dark:bg-blue-900 dark:text-blue-400 text-xs px-2 py-0.5 rounded-full">
+                        New
+                      </span>
+                    ` : ''}
+                  </div>
+                </td>
+                <td class="py-4 px-4 text-gray-900 dark:text-gray-300">${order.delivery_address[0]?.firstName} ${order.delivery_address[0]?.lastName}</td>
+                <td class="py-4 px-4 text-gray-900 dark:text-gray-300">
+                  ${new Date(order.createdAt).toLocaleString('en-US', {
+                    year: 'numeric',
+                    month: 'short',
+                    day: 'numeric',
+                    hour: 'numeric',
+                    minute: 'numeric',
+                    hour12: true
+                  })}
+                </td>
+                <td class="py-4 px-4 status-cell">
+                  <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium ${statusClass}">
+                    <span class="w-2 h-2 rounded-full ${
+                      order.order_status === 'success' ? 'bg-green-600 dark:bg-green-400' :
+                      order.order_status === 'cancelled' ? 'bg-red-600 dark:bg-red-400' :
+                      'bg-yellow-600 dark:bg-yellow-400'
+                    } mr-1.5"></span>
+                    ${statusText}
+                  </span>
+                </td>
+                <td class="py-4 px-4 text-gray-900 dark:text-gray-300">$${totalAmount.toFixed(2)}</td>
+                <td class="px-4 py-2 text-center">
+                  <button 
+                    onclick='showOrderDetails(${JSON.stringify(order)})' 
+                    class="text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300"
+                  >
+                    View Details
+                  </button>
+                </td>
+              </tr>
+            `;
+          }).join('');
+        }
+      } catch (error) {
+        console.error('Error fetching recent orders:', error);
+      }
+    }
+
+    // Show order details in modal
+    function showOrderDetails(order) {
+      const modal = document.getElementById('orderModal');
+      const orderDetails = document.getElementById('orderDetails');
+      
+      const totalAmount = order.items.reduce(
+        (sum, item) => sum + parseFloat(item.price) * item.quantity,
+        0
+      );
+      
+      orderDetails.innerHTML = `
+        <div class="grid grid-cols-2 gap-4 mb-4">
+          <div>
+            <h3 class="font-semibold text-sm mb-2">Order Information</h3>
+            <p class="text-xs mb-1.5">
+              <span class="text-gray-500 dark:text-gray-400">Order ID:</span> 
+              <span 
+                class="cursor-pointer hover:text-blue-600 dark:hover:text-blue-400" 
+                onclick="copyToClipboard('${order._id}')"
+                title="Click to copy"
+              >
+                #${order._id.substring(0, 6)}...
+              </span>
+            </p>
+            <p class="text-xs mb-1.5">
+              <span class="text-gray-500 dark:text-gray-400">Date:</span> 
+              <span 
+                class="cursor-pointer hover:text-blue-600 dark:hover:text-blue-400" 
+                onclick="copyToClipboard('${new Date(order.createdAt).toLocaleString()}')"
+                title="Click to copy"
+              >
+                ${new Date(order.createdAt).toLocaleString()}
+              </span>
+            </p>
+            <div class="text-xs mb-1.5 flex items-center gap-2">
+              <span class="text-gray-500 dark:text-gray-400">Status:</span> 
+              <select 
+                id="orderStatusSelect" 
+                class="text-xs px-2 py-1 rounded border border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-700 cursor-pointer"
+                onchange="updateOrderStatus('${order._id}', this.value)"
+                data-order-id="${order._id}"
+              >
+                <option value="pending" ${order.order_status === 'pending' ? 'selected' : ''}>Pending</option>
+                <option value="success" ${order.order_status === 'success' ? 'selected' : ''}>Completed</option>
+                <option value="cancelled" ${order.order_status === 'cancelled' ? 'selected' : ''}>Cancelled</option>
+              </select>
+              <span id="statusUpdateSpinner" class="hidden">
+                <svg class="animate-spin h-4 w-4 text-blue-500" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                  <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                  <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                </svg>
+              </span>
+            </div>
+          </div>
+          <div>
+            <h3 class="font-semibold text-sm mb-2">Customer Information</h3>
+            <p class="text-xs mb-1.5">
+              <span class="text-gray-500 dark:text-gray-400">Name:</span> 
+              <span 
+                class="cursor-pointer hover:text-blue-600 dark:hover:text-blue-400" 
+                onclick="copyToClipboard('${order.delivery_address[0]?.firstName} ${order.delivery_address[0]?.lastName}')"
+                title="Click to copy"
+              >
+                ${order.delivery_address[0]?.firstName} ${order.delivery_address[0]?.lastName}
+              </span>
+            </p>
+            <p class="text-xs mb-1.5">
+              <span class="text-gray-500 dark:text-gray-400">Phone:</span> 
+              <span 
+                class="cursor-pointer hover:text-blue-600 dark:hover:text-blue-400" 
+                onclick="copyToClipboard('${order.delivery_address[0]?.phoneNumber || 'N/A'}')"
+                title="Click to copy"
+              >
+                ${order.delivery_address[0]?.phoneNumber || 'N/A'}
+              </span>
+            </p>
+            <p class="text-xs mb-1.5">
+              <span class="text-gray-500 dark:text-gray-400">Address:</span> 
+              <span 
+                class="cursor-pointer hover:text-blue-600 dark:hover:text-blue-400" 
+                onclick="copyToClipboard('${order.delivery_address[0]?.address}, ${order.delivery_address[0]?.city}')"
+                title="Click to copy"
+              >
+                ${order.delivery_address[0]?.address}, ${order.delivery_address[0]?.city}
+              </span>
+            </p>
+          </div>
+        </div>
+        
+        <div class="mt-4">
+          <h3 class="font-semibold text-sm mb-2">Order Items</h3>
+          <div class="bg-gray-50 dark:bg-gray-700 rounded-lg p-3">
+            ${order.items.map(item => `
+              <div class="flex justify-between items-center py-1.5 border-b dark:border-gray-600 last:border-0">
+                <div class="cursor-pointer hover:text-blue-600 dark:hover:text-blue-400" 
+                     onclick="copyToClipboard('${item.title} - Quantity: ${item.quantity} - Price: $${(item.price * item.quantity).toFixed(2)}')"
+                     title="Click to copy item details">
+                  <p class="text-xs font-medium">${item.title}</p>
+                  <p class="text-xs text-gray-500 dark:text-gray-400">Quantity: ${item.quantity}</p>
+                </div>
+                <p class="text-xs font-medium">$${(item.price * item.quantity).toFixed(2)}</p>
+              </div>
+            `).join('')}
+            <div class="flex justify-between items-center mt-3 pt-2 border-t dark:border-gray-600">
+              <p class="text-xs font-semibold">Total Amount:</p>
+              <p class="text-xs font-semibold cursor-pointer hover:text-blue-600 dark:hover:text-blue-400"
+                 onclick="copyToClipboard('$${totalAmount.toFixed(2)}')"
+                 title="Click to copy total amount">
+                $${totalAmount.toFixed(2)}
+              </p>
+            </div>
+          </div>
+        </div>
+      `;
+      
+      modal.classList.remove('hidden');
+    }
+
+    // Add copy to clipboard function
+    function copyToClipboard(text) {
+      navigator.clipboard.writeText(text).then(() => {
+        const tooltip = document.createElement('div');
+        tooltip.className = 'fixed bg-gray-800 text-white px-2 py-1 rounded text-sm z-50';
+        tooltip.style.top = `${event.pageY - 30}px`;
+        tooltip.style.left = `${event.pageX}px`;
+        tooltip.textContent = 'Copied!';
+        document.body.appendChild(tooltip);
+        
+        setTimeout(() => tooltip.remove(), 1000);
+      });
+    }
+
+    // Add update order status function
+    async function updateOrderStatus(orderId, newStatus) {
+      const spinner = document.getElementById('statusUpdateSpinner');
+      const statusSelect = document.getElementById('orderStatusSelect');
+      const originalValue = statusSelect.value;
+      
+      try {
+        spinner.classList.remove('hidden');
+        statusSelect.disabled = true;
+        
+        const token = localStorage.getItem('adminToken');
+        const response = await fetch(`/api/admin/orders/${orderId}/status`, {
+          method: 'PATCH',
+          headers: {
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({ status: newStatus })
+        });
+
+        const data = await response.json();
+
+        if (data.success) {
+          // Show success feedback
+          const tooltip = document.createElement('div');
+          tooltip.className = 'fixed bg-green-600 text-white px-2 py-1 rounded text-xs z-50';
+          tooltip.style.top = `${event.pageY - 30}px`;
+          tooltip.style.left = `${event.pageX}px`;
+          tooltip.textContent = 'Status updated successfully!';
+          document.body.appendChild(tooltip);
+          
+          setTimeout(() => tooltip.remove(), 2000);
+
+          // Update status in table
+          const orderRow = document.querySelector(`tr[data-order-id="${orderId}"]`);
+          if (orderRow) {
+            const statusCell = orderRow.querySelector('.status-cell');
+            if (statusCell) {
+              const statusClass = 
+                newStatus === 'success' ? 'bg-green-100 text-green-600 dark:bg-green-900 dark:text-green-400' :
+                newStatus === 'cancelled' ? 'bg-red-100 text-red-600 dark:bg-red-900 dark:text-red-400' :
+                'bg-yellow-100 text-yellow-600 dark:bg-yellow-900 dark:text-yellow-400';
+
+              const dotClass = 
+                newStatus === 'success' ? 'bg-green-600 dark:bg-green-400' :
+                newStatus === 'cancelled' ? 'bg-red-600 dark:bg-red-400' :
+                'bg-yellow-600 dark:bg-yellow-400';
+
+              const statusText = 
+                newStatus === 'success' ? 'Completed' :
+                newStatus === 'cancelled' ? 'Cancelled' : 
+                'Pending';
+
+              statusCell.innerHTML = `
+                <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium ${statusClass}">
+                  <span class="w-2 h-2 rounded-full ${dotClass} mr-1.5"></span>
+                  ${statusText}
+                </span>
+              `;
+            }
+          }
+
+          // Refresh all dashboard data
+          fetchUserStats();
+          fetchTotalRevenue();
+          fetchOrderStatusData();
+          fetchTotalOrdersData();
+          fetchRecentOrders();
+
+        } else {
+          throw new Error(data.message || 'Failed to update status');
+        }
+      } catch (error) {
+        console.error('Error updating order status:', error);
+        statusSelect.value = originalValue;
+        
+        const tooltip = document.createElement('div');
+        tooltip.className = 'fixed bg-red-600 text-white px-2 py-1 rounded text-xs z-50';
+        tooltip.style.top = `${event.pageY - 30}px`;
+        tooltip.style.left = `${event.pageX}px`;
+        tooltip.textContent = 'Failed to update status!';
+        document.body.appendChild(tooltip);
+        
+        setTimeout(() => tooltip.remove(), 2000);
+      } finally {
+        spinner.classList.add('hidden');
+        statusSelect.disabled = false;
+      }
+    }
+
+    // Add modal close functionality
+    document.addEventListener('DOMContentLoaded', () => {
+      const modal = document.querySelector('#orderModal');
+      const closeModalBtn = document.querySelector('#closeModal');
+
+      const closeModal = () => {
+        modal.classList.add('hidden');
+        // Refresh all dashboard data
+        fetchUserStats();
+        fetchTotalRevenue();
+        fetchOrderStatusData();
+        fetchTotalOrdersData();
+        fetchRecentOrders();
+      };
+
+      closeModalBtn.addEventListener('click', closeModal);
+      
+      // Close modal when clicking outside
+      modal.addEventListener('click', (e) => {
+        if (e.target === modal) {
+          closeModal();
+        }
+      });
+    });
+
     // Fetch data for the charts
     fetchUserStats();
     fetchTotalRevenue();
     fetchOrderStatusData();
     fetchTotalOrdersData();
-
-    var ctx2 = document.getElementById('salesChart').getContext('2d');
-    var salesChart = new Chart(ctx2, {
-      type: 'line',
-      data: { labels: ['January', 'February', 'March', 'April', 'May', 'June'], datasets: [{ label: 'Sales ($)', data: [1200, 1500, 1300, 1700, 1600, 1800], borderColor: 'rgba(75, 192, 192, 1)', backgroundColor: 'rgba(75, 192, 192, 0.2)', borderWidth: 2 }] },
-      options: { responsive: true, scales: { y: { beginAtZero: true } } }
-    });
-
-    var ctx3 = document.getElementById('growthChart').getContext('2d');
-    var growthChart = new Chart(ctx3, {
-      type: 'bar',
-      data: { labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'], datasets: [{ label: 'New Users', data: [50, 75, 100, 150, 200, 250], backgroundColor: 'rgba(54, 162, 235, 0.5)', borderColor: 'rgba(54, 162, 235, 1)', borderWidth: 2 }] },
-      options: { responsive: true, scales: { y: { beginAtZero: true } } }
-    });
+    fetchRecentOrders();
 
     // Initialize the charts (Order Status)
     var ctx = document.getElementById('orderStatusChart').getContext('2d');

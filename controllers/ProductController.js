@@ -99,3 +99,19 @@ exports.deleteProduct = async (req, res) => {
 exports.addProductPage = async (req, res) => {
     res.sendFile(path.join(__dirname, '../public', '/addProduct/index.html'));
 };
+
+exports.getProducts = async (req, res) => {
+  try {
+    const products = await Product.find();
+    res.json({
+      success: true,
+      data: products
+    });
+  } catch (error) {
+    console.error('Error fetching products:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Error fetching products'
+    });
+  }
+};

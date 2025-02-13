@@ -7,7 +7,7 @@ const authenticateToken = require('../middleware/authMiddleware');  // Import th
 const router = express.Router();
 
 router.post('/', upload.single('image'), createProduct);  // Use multer middleware for file upload
-router.get('/', authenticateToken, getAllProducts);
+router.get('/', getAllProducts);
 router.get('/add', addProductPage);
 router.get('/:id', getProductById);
 router.put('/:id', updateProduct);

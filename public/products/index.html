@@ -5,6 +5,15 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Products Page</title>
   <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {},
+      },
+    }
+  </script>
+  <script src="/js/theme.js"></script>
   <link href="https://cdn.jsdelivr.net/npm/remixicon/fonts/remixicon.css" rel="stylesheet">
   <style>
     /* Add a style to limit description to one line */
@@ -20,37 +29,69 @@
     }
   </style>
 </head>
-<body class="bg-gray-50 min-h-screen">
+<body class="bg-gray-50 dark:bg-gray-900 min-h-screen transition-colors duration-200">
   <div class="flex flex-col min-h-screen">
     <!-- Header -->
-    <header class="bg-white shadow-md py-4 px-6 border-b border-gray-200">
-      <h1 class="text-2xl font-bold text-gray-800 flex items-center">
-        <i class="ri-shopping-bag-3-line text-blue-500 text-3xl mr-2"></i>
+    <header class="bg-white dark:bg-gray-800 shadow-md py-4 px-6 border-b border-gray-200 dark:border-gray-700">
+      <h1 class="text-2xl font-bold text-gray-800 dark:text-white flex items-center">
+        <i class="ri-shopping-cart-line text-green-500 text-3xl mr-2"></i>
         Products
       </h1>
     </header>
 
+
     <!-- Products Content -->
     <main class="flex-1 p-10">
-      <h2 class="text-xl font-semibold text-gray-800 mb-6">Product List</h2>
+      <!-- Search and Filter Section -->
+      <div class="flex justify-between items-center mb-6">
+        <div class="flex items-center space-x-4">
+          <h2 class="text-xl font-semibold text-gray-800 dark:text-white">All Products</h2>
+          <div class="relative">
+            <input 
+              type="text" 
+              id="searchProduct" 
+              placeholder="Search products..." 
+              class="pl-10 pr-4 py-2 border rounded-lg focus:ring-blue-500 focus:border-blue-500 w-64
+                     dark:bg-gray-700 dark:border-gray-600 dark:text-white dark:placeholder-gray-400"
+            >
+            <i class="ri-search-line absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
+          </div>
+          <select 
+            id="categoryFilter" 
+            class="px-4 py-2 border rounded-lg focus:ring-blue-500 focus:border-blue-500
+                   dark:bg-gray-700 dark:border-gray-600 dark:text-white"
+          >
+            <option value="all">All Categories</option>
+            <option value="electronics">Electronics</option>
+            <option value="clothing">Clothing</option>
+            <option value="shoes">Shoes</option>
+            <option value="books">Books</option>
+            <!-- Add more categories as needed -->
+          </select>
+        </div>
+        <div class="bg-white dark:bg-gray-800 px-4 py-2 rounded-lg shadow">
+          <span class="text-gray-600 dark:text-gray-400">Total Products:</span>
+          <span class="ml-2 text-blue-600 dark:text-blue-400 font-semibold" id="total-products-count">0</span>
+        </div>
+      </div>
 
       <div class="overflow-x-auto">
-        <table class="min-w-full bg-white shadow-lg rounded-xl" id="product-table">
-          <thead class="bg-blue-100">
+        <table class="min-w-full bg-white dark:bg-gray-800 shadow-lg rounded-xl" id="product-table">
+          <thead class="bg-blue-100 dark:bg-gray-700">
             <tr>
-              <th class="py-3 px-4 text-left text-sm font-semibold text-gray-700">Image</th>
-              <th class="py-3 px-4 text-left text-sm font-semibold text-gray-700">Name</th>
-              <th class="py-3 px-4 text-left text-sm font-semibold text-gray-700">Description</th>
-              <th class="py-3 px-4 text-left text-sm font-semibold text-gray-700">Category</th>
-              <th class="py-3 px-4 text-left text-sm font-semibold text-gray-700">Price</th>
-              <th class="py-3 px-4 text-left text-sm font-semibold text-gray-700">Sale Price</th>
-              <th class="py-3 px-4 text-left text-sm font-semibold text-gray-700">Stock</th>
-              <th class="py-3 px-4 text-left text-sm font-semibold text-gray-700">Colors</th>
-              <th class="py-3 px-4 text-left text-sm font-semibold text-gray-700">Sizes</th>
-              <th class="py-3 px-4 text-center text-sm font-semibold text-gray-700">Actions</th>
+              <th class="py-3 px-4 text-left text-sm font-semibold text-gray-700 dark:text-gray-300">Image</th>
+              <th class="py-3 px-4 text-left text-sm font-semibold text-gray-700 dark:text-gray-300">Name</th>
+              <th class="py-3 px-4 text-left text-sm font-semibold text-gray-700 dark:text-gray-300">Description</th>
+              <th class="py-3 px-4 text-left text-sm font-semibold text-gray-700 dark:text-gray-300">Category</th>
+              <th class="py-3 px-4 text-left text-sm font-semibold text-gray-700 dark:text-gray-300">Price</th>
+              <th class="py-3 px-4 text-left text-sm font-semibold text-gray-700 dark:text-gray-300">Sale Price</th>
+              <th class="py-3 px-4 text-left text-sm font-semibold text-gray-700 dark:text-gray-300">Stock</th>
+              <th class="py-3 px-4 text-left text-sm font-semibold text-gray-700 dark:text-gray-300">Colors</th>
+              <th class="py-3 px-4 text-left text-sm font-semibold text-gray-700 dark:text-gray-300">Sizes</th>
+              <th class="py-3 px-4 text-center text-sm font-semibold text-gray-700 dark:text-gray-300">Actions</th>
             </tr>
           </thead>
-          <tbody id="product-list">
+          <tbody id="product-list" class="divide-y divide-gray-200 dark:divide-gray-700">
             <!-- Product rows will be injected here -->
           </tbody>
         </table>
@@ -62,7 +103,7 @@
     </main>
 
     <!-- Footer -->
-    <footer class="bg-white shadow-md py-4 text-center text-sm text-gray-500 border-t border-gray-200">
+    <footer class="bg-white dark:bg-gray-800 shadow-md py-4 text-center text-sm text-gray-500 dark:text-gray-400 border-t border-gray-200 dark:border-gray-700">
       &copy; 2025 Products Dashboard. All rights reserved.
     </footer>
   </div>
@@ -86,21 +127,21 @@
           const productList = document.getElementById('product-list');
           products.forEach(product => {
             const row = document.createElement('tr');
-            row.classList.add('border-b', 'hover:bg-gray-50');
+            row.classList.add('border-b', 'hover:bg-gray-50', 'dark:border-gray-700', 'dark:hover:bg-gray-700');
             
             row.innerHTML = `
               <td class="py-4 px-4"><img src="http://localhost:3000/uploads/${product.image}" alt="${product.name}" class="product-image"></td>
-              <td class="py-4 px-4">${product.name}</td>
-              <td class="py-4 px-4 description">${product.description}</td>
-              <td class="py-4 px-4">${product.category}</td>
-              <td class="py-4 px-4">$${product.price}</td>
-              <td class="py-4 px-4">$${product.salePrice || 'N/A'}</td>
-              <td class="py-4 px-4">${product.stock > 0 ? 'In Stock' : 'Out of Stock'}</td>
-              <td class="py-4 px-4">${product.colors.join(', ')}</td>
-              <td class="py-4 px-4">${product.sizes.join(', ')}</td>
+              <td class="py-4 px-4 text-gray-900 dark:text-gray-300">${product.name}</td>
+              <td class="py-4 px-4 description text-gray-900 dark:text-gray-300">${product.description}</td>
+              <td class="py-4 px-4 text-gray-900 dark:text-gray-300">${product.category}</td>
+              <td class="py-4 px-4 text-gray-900 dark:text-gray-300">$${product.price}</td>
+              <td class="py-4 px-4 text-gray-900 dark:text-gray-300">$${product.salePrice || 'N/A'}</td>
+              <td class="py-4 px-4 text-gray-900 dark:text-gray-300">${product.stock > 0 ? 'In Stock' : 'Out of Stock'}</td>
+              <td class="py-4 px-4 text-gray-900 dark:text-gray-300">${product.colors.join(', ')}</td>
+              <td class="py-4 px-4 text-gray-900 dark:text-gray-300">${product.sizes.join(', ')}</td>
               <td class="py-4 px-4 text-center">
-                <button class="text-blue-600 hover:underline mr-2">Edit</button>
-                <button class="text-red-600 hover:underline">Delete</button>
+                <button class="text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300 hover:underline mr-2">Edit</button>
+                <button class="text-red-600 dark:text-red-400 hover:text-red-800 dark:hover:text-red-300 hover:underline">Delete</button>
               </td>
             `;
             
@@ -111,5 +152,6 @@
     }
   </script>
   
+  <script src="scripts/script.js"></script>
 </body>
 </html>
