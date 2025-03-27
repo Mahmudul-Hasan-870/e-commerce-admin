@@ -119,7 +119,7 @@ function displayProducts(products) {
   productList.innerHTML = products.map(product => `
     <tr class="border-b hover:bg-gray-50 dark:hover:bg-gray-700 dark:border-gray-700">
       <td class="py-4 px-4">
-        <img src="http://localhost:3000/public/uploads/products/${product.image}" alt="${product.name}" class="product-image">
+        <img src="/public/uploads/products/${product.image}" alt="${product.name}" class="product-image">
       </td>
       <td class="py-4 px-4 text-gray-900 dark:text-gray-300">${product.name}</td>
       <td class="py-4 px-4 description text-gray-900 dark:text-gray-300">${product.description}</td>
