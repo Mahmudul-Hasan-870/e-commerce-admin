@@ -9,7 +9,6 @@
   "keywords": [],
   "author": "",
   "license": "ISC",
-  "description": "",
   "dependencies": {
     "autoprefixer": "^10.4.20",
     "bcrypt": "^5.1.1",
@@ -31,5 +30,14 @@
   },
   "devDependencies": {
     "nodemon": "^3.1.9"
-  }
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Mahmudul-Hasan-870/e-commerce-admin.git"
+  },
+  "bugs": {
+    "url": "https://github.com/Mahmudul-Hasan-870/e-commerce-admin/issues"
+  },
+  "homepage": "https://github.com/Mahmudul-Hasan-870/e-commerce-admin#readme",
+  "description": ""
 }

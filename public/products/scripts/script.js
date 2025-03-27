@@ -32,7 +32,8 @@ async function fetchProducts() {
     });
 
     if (!response.ok) {
-      throw new Error('Failed to fetch products');
+      const errorText = await response.text(); // Get the error response text
+      throw new Error(`Failed to fetch products: ${errorText}`);
     }
 
     const data = await response.json();
@@ -114,10 +115,11 @@ function filterProducts() {
 // Display products function
 function displayProducts(products) {
   const productList = document.getElementById('product-list');
+
   productList.innerHTML = products.map(product => `
     <tr class="border-b hover:bg-gray-50 dark:hover:bg-gray-700 dark:border-gray-700">
       <td class="py-4 px-4">
-        <img src="http://localhost:3000/uploads/${product.image}" alt="${product.name}" class="product-image">
+        <img src="http://localhost:3000/public/uploads/products/${product.image}" alt="${product.name}" class="product-image">
       </td>
       <td class="py-4 px-4 text-gray-900 dark:text-gray-300">${product.name}</td>
       <td class="py-4 px-4 description text-gray-900 dark:text-gray-300">${product.description}</td>

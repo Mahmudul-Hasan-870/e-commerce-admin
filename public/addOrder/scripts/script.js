@@ -16,6 +16,11 @@ let products = [];
         }
       });
 
+      if (!response.ok) {
+        const errorText = await response.text(); // Get the error response text
+        throw new Error(`Failed to fetch products: ${errorText}`);
+      }
+
       const data = await response.json();
       console.log('Products data:', data); // Debug log
       

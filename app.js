@@ -9,6 +9,7 @@ const productRoutes = require('./routes/products');
 const orderRoutes = require('./routes/orders');
 const adminRoutes = require('./routes/admin');
 const categoryRoutes = require('./routes/categories');
+const fs = require('fs');
 
 
 dotenv.config();
@@ -22,7 +23,26 @@ app.use(express.urlencoded({ extended: true }));
 
 // Serve static files
 app.use(express.static(path.join(__dirname, 'public')));
-app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
+
+app.use('/public/uploads', express.static(path.join(__dirname, 'public/uploads')));
+app.use('/public/uploads/products', express.static(path.join(__dirname, 'public/uploads/products')));
+app.use('/public/uploads/banners', express.static(path.join(__dirname, 'public/uploads/banners')));
+
+// Create uploads directory if it doesn't exist
+const uploadDir = path.join(__dirname, 'public/uploads');
+if (!fs.existsSync(uploadDir)) {
+    fs.mkdirSync(uploadDir, { recursive: true });
+}
+
+const productsUploadDir = path.join(__dirname, 'public/uploads/products');
+if (!fs.existsSync(productsUploadDir)) {
+    fs.mkdirSync(productsUploadDir, { recursive: true });
+}
+
+const bannersUploadDir = path.join(__dirname, 'public/uploads/banners');
+if (!fs.existsSync(bannersUploadDir)) {
+    fs.mkdirSync(bannersUploadDir, { recursive: true });
+}
 
 // Database connection
 connectDB().catch((err) => {

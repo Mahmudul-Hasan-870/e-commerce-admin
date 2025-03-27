@@ -5,14 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Customers List</title>
   <script src="https://cdn.tailwindcss.com"></script>
-  <script>
-    tailwind.config = {
-      darkMode: 'class',
-      theme: {
-        extend: {},
-      },
-    }
-  </script>
+  <script src="/js/theme-config.js"></script>
   <script src="/js/theme.js"></script>
   <link href="https://cdn.jsdelivr.net/npm/remixicon/fonts/remixicon.css" rel="stylesheet">
   <style>
@@ -36,7 +29,7 @@
     <!-- Header -->
     <header class="bg-white dark:bg-gray-800 shadow-md py-4 px-6 border-b border-gray-200 dark:border-gray-700">
       <h1 class="text-2xl font-bold text-gray-800 dark:text-white flex items-center">
-        <i class="ri-user-line text-orange-500 text-3xl mr-2"></i>
+        <i class="ri-user-line text-primary text-3xl mr-2"></i>
         Customers
       </h1>
     </header>
@@ -52,14 +45,14 @@
               type="text" 
               id="search" 
               placeholder="Search customers..." 
-              class="pl-10 pr-4 py-2 border rounded-lg focus:ring-blue-500 focus:border-blue-500 w-64
+              class="pl-10 pr-4 py-2 border rounded-lg focus:ring-primary focus:border-primary w-64
                      dark:bg-gray-700 dark:border-gray-600 dark:text-white dark:placeholder-gray-400"
             >
             <i class="ri-search-line absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
           </div>
           <select 
             id="statusFilter" 
-            class="px-4 py-2 border rounded-lg focus:ring-blue-500 focus:border-blue-500
+            class="px-4 py-2 border rounded-lg focus:ring-primary focus:border-primary
                    dark:bg-gray-700 dark:border-gray-600 dark:text-white"
           >
             <option value="all">All Status</option>
@@ -69,7 +62,7 @@
         </div>
         <div class="bg-white dark:bg-gray-800 px-4 py-2 rounded-lg shadow">
           <span class="text-gray-600 dark:text-gray-400">Total Customers:</span>
-          <span class="ml-2 text-blue-600 dark:text-blue-400 font-semibold" id="total-users-count">0</span>
+          <span class="ml-2 text-primary dark:text-primary font-semibold" id="total-users-count">0</span>
         </div>
       </div>
       
@@ -123,7 +116,7 @@
             <input 
               type="text" 
               id="name" 
-              class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 
+              class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-primary focus:border-primary 
                      dark:bg-gray-700 dark:border-gray-600 dark:text-white"
               required
             >
@@ -137,7 +130,7 @@
             <input 
               type="email" 
               id="email" 
-              class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500
+              class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-primary focus:border-primary
                      dark:bg-gray-700 dark:border-gray-600 dark:text-white"
               required
             >
@@ -152,7 +145,7 @@
             <input 
               type="password" 
               id="password" 
-              class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500
+              class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-primary focus:border-primary
                      dark:bg-gray-700 dark:border-gray-600 dark:text-white"
             >
           </div>
@@ -164,7 +157,7 @@
             </label>
             <select 
               id="isLogged" 
-              class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500
+              class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-primary focus:border-primary
                      dark:bg-gray-700 dark:border-gray-600 dark:text-white"
             >
               <option value="true">Online</option>
@@ -177,8 +170,8 @@
         <div class="flex justify-end mt-8">
           <button 
             type="submit"
-            class="px-6 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 
-                   focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition"
+            class="px-6 py-2 bg-primary text-white rounded-lg hover:bg-primary/90 
+                   focus:ring-2 focus:ring-primary focus:ring-offset-2 transition"
           >
             Save Changes
           </button>

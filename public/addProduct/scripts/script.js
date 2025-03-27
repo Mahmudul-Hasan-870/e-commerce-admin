@@ -65,16 +65,21 @@ document.addEventListener('DOMContentLoaded', () => {
                 body: formData
             });
 
-            const result = await response.json();
+            if (!response.ok) {
+                const errorText = await response.text(); // Get the error response text
+                throw new Error(`Failed to create product: ${errorText}`);
+            }
 
-            if (response.ok && result.status === 'success') {
+            const data = await response.json();
+
+            if (data.status === 'success') {
                 showAlert('Product added successfully!', 'success');
                 // Redirect to products page after short delay
                 setTimeout(() => {
                     window.location.href = '../products/index.html';
                 }, 1500);
             } else {
-                throw new Error(result.message || 'Failed to add product');
+                throw new Error(data.message || 'Failed to add product');
             }
         } catch (error) {
             console.error('Error:', error);

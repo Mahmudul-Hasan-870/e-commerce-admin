@@ -97,10 +97,14 @@ function showOrderDetails(order) {
           return `
             <div class="flex justify-between items-center py-1.5 border-b dark:border-gray-600 last:border-0">
               <div class="cursor-pointer hover:text-blue-600 dark:hover:text-blue-400" 
-                   onclick="copyToClipboard('${itemTitle} - Quantity: ${item.quantity} - Price: $${(item.price * item.quantity).toFixed(2)}')"
+                   onclick="copyToClipboard('${itemTitle} - Size: ${item.size || 'N/A'} - Color: ${item.color || 'N/A'} - Quantity: ${item.quantity} - Price: $${(item.price * item.quantity).toFixed(2)}')"
                    title="Click to copy item details">
                 <p class="text-xs font-medium">${itemTitle}</p>
-                <p class="text-xs text-gray-500 dark:text-gray-400">Quantity: ${item.quantity}</p>
+                <div class="text-xs text-gray-500 dark:text-gray-400 space-y-0.5">
+                  <p>Size: ${item.size || 'N/A'}</p>
+                  <p>Color: ${item.color || 'N/A'}</p>
+                  <p>Quantity: ${item.quantity}</p>
+                </div>
               </div>
               <p class="text-xs font-medium">$${(item.price * item.quantity).toFixed(2)}</p>
             </div>
